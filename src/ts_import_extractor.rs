@@ -20,8 +20,11 @@ pub fn read_imports_from_file(file_path: &str) -> io::Result<Vec<String>> {
 
 fn extract_import(line: &str) -> Option<String> {
     if let Some(start) = line.find("from ") {
-        let end = line[start + 6..].find(";").unwrap_or(line.len());
-        let path = &line[start + 6..start + 6 + end];
+        let end = line[start + 6..]
+            .find(";")
+            .map(|i| start + 6 + i - 1)
+            .unwrap_or(line.len());
+        let path = &line[start + 6..end];
         return Some(path.to_string());
     }
     None
