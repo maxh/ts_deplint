@@ -34,6 +34,8 @@ impl Rules {
         let unique_names = self.extract_unique_names();
         let allow_rules = self.get_allow_rules(key)?;
         let diff = find_difference(unique_names, allow_rules.clone());
+        // remove the key from the diff
+        let diff = diff.into_iter().filter(|x| x != key).collect::<Vec<_>>();
         Some(diff)
     }
 }

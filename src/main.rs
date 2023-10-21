@@ -15,6 +15,6 @@ fn main() -> Result<(), Box<dyn Error>> {
         std::process::exit(1);
     }
     let path = &args[1];
-    visit_directory::visit_directory(path)?;
+    visit_directory::visit_directory(vec![], path)?;
     Ok(())
 }
