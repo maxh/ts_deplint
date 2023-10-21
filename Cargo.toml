@@ -1,0 +1,12 @@
+[package]
+name = "ts_import_extractor"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+
+[[bin]]
+name = "ts_import_extractor"
+path = "src/ts_import_extractor.rs"
