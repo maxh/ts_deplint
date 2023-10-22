@@ -37,8 +37,9 @@ fn visit_directories(
             if let Some(disallowed_siblings) = disallowed_siblings_result {
                 let new_disallowed_imports = disallowed_siblings
                     .iter()
-                    .map(|s| format!("{}/{}", target.to_str().expect(""), s))
-                    .map(|s| s.replace("/Users/maxheinritz/loop-payments/backend/src", "src"))
+                    .map(|s| target.join(s))
+                    .filter_map(|p| p.strip_prefix(root).ok().map(|p| p.to_path_buf()))
+                    .map(|p| p.to_str().expect("").to_string())
                     .collect::<Vec<_>>();
                 dir_disallowed_imports.extend(new_disallowed_imports);
             }
