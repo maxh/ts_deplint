@@ -110,12 +110,10 @@ fn main() -> Result<(), Box<dyn Error>> {
                         eprintln!("Target path '{}' does not exist.", path);
                         std::process::exit(1);
                     }
-                    println!("Looping through {}...", path);
                     let violations = list_violations(&root, target, true)?;
                     if violations.len() == 0 {
                         break;
                     }
-                    println!("Found {} violations.", violations.len());
                     for violation in violations {
                         ts_deplint::fix_violation(&root, &violation)?;
                     }

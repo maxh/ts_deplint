@@ -27,9 +27,7 @@ pub fn fix_violation(root: &Path, violation: &Violation) -> Result<(), Box<dyn s
         .take_while(|c| *c != '/')
         .collect::<String>();
     let rules_path = root.join(common_prefix).join(RULES_FILE_NAME);
-    println!("rules_path: {:?}", rules_path);
     let rules = read_rules_file(&rules_path)?;
-    print!("Fixing {}... ", rules_path.to_str().unwrap());
     let mut rules = rules;
     let mut allow = rules.allow;
     let disallowed_imports = allow
