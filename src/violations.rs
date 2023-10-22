@@ -17,9 +17,6 @@ pub fn pretty_print_violations(violations: Vec<Violation>) {
             .push(violation.disallowed_import);
     }
 
-    // Print each cluster with the file path on one line
-    // each disallowed import on a new line
-    // and a blank line between each Cluster
     for (file_path, disallowed_imports) in disallowed_imports_by_file_path {
         println!("{}", file_path);
         for disallowed_import in disallowed_imports {
