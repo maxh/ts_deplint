@@ -36,6 +36,14 @@ fn update_diagrams_recursively(dir: &Path) -> Result<(), Box<dyn Error>> {
 ///   lint     Lint the passed-in paths for disallowed imports.
 ///   diagram  Update the README.md file in the passed-in paths with a diagram of the disallowed imports.
 ///
+/// Examples:
+///
+///  ts_deplint lint src
+///  ts_deplint lint src/domain src/app
+///  ts_deplint lint src/domain/user.ts
+///  ts_deplint diagram src/.deplint.rules.yml
+///  ts_deplint diagram src
+///
 /// Paths:
 ///
 ///  Paths can be either directories or files.
@@ -75,10 +83,13 @@ fn main() -> Result<(), Box<dyn Error>> {
         "diagram" => {
             for path in paths {
                 let target = Path::new(path);
-                if target.is_dir() {
+                if target.ends_with(RULES_FILE_NAME) {
+                    let readme_path = target.parent().unwrap().join("README.md");
+                    update_readme_with_diagram(target, &readme_path)?;
+                } else if target.is_dir() {
                     update_diagrams_recursively(&target)?;
                 } else {
-                    eprintln!("Target path '{}' is not a directory.", path);
+                    eprintln!("Target path '{}' is not a rules file or directory.", path);
                     std::process::exit(1);
                 }
             }

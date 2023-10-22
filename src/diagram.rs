@@ -54,11 +54,13 @@ pub fn update_readme_with_diagram(
     }
 
     let (before_dep_diagram_block, after_dep_diagram_block) = get_other_readme_lines(readme_path)?;
+
     let mut mermaid_edges = allows
         .iter()
         .flat_map(|(source, targets)| {
             targets
                 .iter()
+                .filter(|&target| target != "-")
                 .map(move |target| format!("  {} --> {}", source, target))
         })
         .collect::<Vec<String>>();
