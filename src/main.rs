@@ -4,6 +4,7 @@ use std::path::Path;
 
 mod files;
 mod imports;
+mod initial;
 mod root;
 mod rules;
 mod visit;
@@ -16,11 +17,11 @@ fn main() -> Result<(), Box<dyn Error>> {
         std::process::exit(1);
     }
 
-    let current = Path::new(&args[1]);
-    if let Some(root) = root::find_package_json_directory(current) {
-        // let initial_disallowed_imports = vec!["src".to_string()];
-        println!("Found package.json in: {:?}", root);
-        visit::visit_path(root.as_ref(), vec![], current)?;
+    let target = Path::new(&args[1]);
+    if let Some(root) = root::find_package_json_directory(target) {
+        let disallowed_imports =
+            initial::get_initial_disallowed_imports(&root, target, vec![], &root);
+        visit::visit_path(root.as_ref(), disallowed_imports, target)?;
     } else {
         println!("No package.json found in any parent directory.");
     }
