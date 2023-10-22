@@ -27,6 +27,7 @@ pub fn fix_violation(violation: &Violation) -> Result<(), Box<dyn std::error::Er
         .take_while(|c| *c != '/')
         .collect::<String>();
     let rules_path = Path::new(&common_prefix).join(RULES_FILE_NAME);
+    println!("rules_path: {:?}", rules_path);
     let rules = read_rules_file(&rules_path);
     if let Ok(rules) = rules {
         print!("Fixing {}... ", rules_path.to_str().unwrap());
