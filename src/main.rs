@@ -2,7 +2,10 @@ use std::error::Error;
 use std::path::Path;
 use std::{collections::HashSet, env};
 
-use ts_deplint::{list_violations, pretty_print_violations, update_readme_with_diagram, Violation};
+use ts_deplint::{
+    list_violations, pretty_print_violations, update_readme_with_diagram, Violation,
+    RULES_FILE_NAME,
+};
 
 fn main() -> Result<(), Box<dyn Error>> {
     let args: Vec<String> = env::args().collect();
