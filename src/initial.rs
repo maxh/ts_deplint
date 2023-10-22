@@ -2,7 +2,11 @@ use std::path::Path;
 
 use crate::rules;
 
-pub fn get_initial_disallowed_imports(
+pub fn get_initial_disallowed_imports(root: &Path, target: &Path) -> Vec<String> {
+    return get_initial_disallowed_imports_impl(root, target, vec![], &root);
+}
+
+fn get_initial_disallowed_imports_impl(
     root: &Path,
     target: &Path,
     disallowed_imports: Vec<String>,
@@ -24,7 +28,7 @@ pub fn get_initial_disallowed_imports(
         &rules::get_dir_rules(current),
         &first_directory,
     );
-    return get_initial_disallowed_imports(
+    return get_initial_disallowed_imports_impl(
         root,
         target,
         child_disallowed_imports,

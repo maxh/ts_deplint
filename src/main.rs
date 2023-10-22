@@ -20,9 +20,8 @@ fn main() -> Result<(), Box<dyn Error>> {
 
     let target = Path::new(&args[1]);
     if let Some(root) = root::find_package_json_directory(target) {
-        let disallowed_imports =
-            initial::get_initial_disallowed_imports(&root, target, vec![], &root);
-        let violations = visit::visit_path(root.as_ref(), disallowed_imports, target)?;
+        let disallowed_imports = initial::get_initial_disallowed_imports(&root, target);
+        let violations = visit::visit_path(root.as_ref(), &disallowed_imports, target)?;
         violations::pretty_print_violations(violations);
     } else {
         println!("No package.json found in any parent directory.");

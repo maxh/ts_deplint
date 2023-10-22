@@ -3,7 +3,7 @@ use std::{error::Error, path::Path};
 
 pub fn visit_path(
     root: &Path,
-    disallowed_imports: Vec<String>,
+    disallowed_imports: &Vec<String>,
     current: &Path,
 ) -> Result<Vec<Violation>, Box<dyn Error>> {
     let map = files::list_files_and_directories(current)?;
@@ -14,13 +14,13 @@ pub fn visit_path(
 
     violations.extend(visit_directories(
         root,
-        &disallowed_imports,
+        disallowed_imports,
         &current,
         &directories,
     )?);
     violations.extend(check_files_for_disallowed_imports(
         root,
-        &disallowed_imports,
+        disallowed_imports,
         &current,
         &files,
     )?);
@@ -77,7 +77,7 @@ fn visit_directories(
             child,
         );
         let next = current.join(child);
-        violations.extend(visit_path(root, dir_disallowed_imports, &next)?);
+        violations.extend(visit_path(root, &dir_disallowed_imports, &next)?);
     }
 
     Ok(violations)
