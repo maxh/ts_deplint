@@ -1,32 +1,59 @@
-use std::env;
 use std::error::Error;
 use std::path::Path;
+use std::{collections::HashSet, env};
 
-use ts_deplint::{list_violations, pretty_print_violations, update_readme_with_diagram};
+use ts_deplint::{list_violations, pretty_print_violations, update_readme_with_diagram, Violation};
 
 fn main() -> Result<(), Box<dyn Error>> {
     let args: Vec<String> = env::args().collect();
 
     if args.len() < 3 {
-        eprintln!("Usage: [lint|diagram] {} <path>", args[0]);
+        eprintln!("Usage: {} <command> <path1> <path2> ...", args[0]);
         std::process::exit(1);
     }
 
     let command = &args[1];
-    let target = Path::new(&args[2]);
-    if (command != "lint" && command != "diagram") || !target.exists() {
-        eprintln!("Usage: [lint|diagram] {} <path>", args[0]);
-        std::process::exit(1);
+
+    let paths: Vec<&str> = args.iter().skip(2).map(|s| s.as_str()).collect();
+
+    match command.as_str() {
+        "lint" => {
+            let mut all_violations: HashSet<Violation> = HashSet::new(); // Use HashSet to ensure uniqueness
+            for path in paths {
+                let target = Path::new(path);
+                if !target.exists() {
+                    eprintln!("Target path '{}' does not exist.", path);
+                    std::process::exit(1);
+                }
+                let violations = list_violations(target)?;
+                all_violations.extend(violations); // Add violations to the HashSet
+            }
+
+            // No need to convert to Vec, as HashSet is iterable
+            pretty_print_violations(all_violations);
+        }
+        "diagram" => {
+            for path in paths {
+                let target = Path::new(path);
+                let rules_path = target.join(".deplint.rules.yml");
+                let readme_path = target.join("README.md");
+
+                if !rules_path.exists() || !readme_path.exists() {
+                    eprintln!(
+                        "Required files do not exist in the target directory '{}'.",
+                        path
+                    );
+                    std::process::exit(1);
+                }
+
+                update_readme_with_diagram(&rules_path, &readme_path)?;
+            }
+        }
+        _ => {
+            eprintln!("Invalid command. Use 'lint' or 'diagram'.");
+            std::process::exit(1);
+        }
     }
-    if command == "lint" {
-        let violations = list_violations(target)?;
-        pretty_print_violations(violations);
-    }
-    if command == "diagram" {
-        update_readme_with_diagram(
-            &target.join(".deplint.rules.yml"),
-            &target.join("README.md"),
-        )?;
-    }
+
     Ok(())
 }

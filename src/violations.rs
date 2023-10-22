@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::{collections::HashMap, hash::Hash, hash::Hasher};
 
 #[derive(Debug)]
 pub struct Violation {
@@ -6,7 +6,25 @@ pub struct Violation {
     pub disallowed_import: String,
 }
 
-pub fn pretty_print_violations(violations: Vec<Violation>) {
+impl Hash for Violation {
+    fn hash<H: Hasher>(&self, state: &mut H) {
+        self.file_path.hash(state);
+        self.disallowed_import.hash(state);
+    }
+}
+
+impl PartialEq for Violation {
+    fn eq(&self, other: &Self) -> bool {
+        self.file_path == other.file_path && self.disallowed_import == other.disallowed_import
+    }
+}
+
+impl Eq for Violation {}
+
+pub fn pretty_print_violations<I>(violations: I)
+where
+    I: IntoIterator<Item = Violation>,
+{
     // Cluster violations by file path
     let mut disallowed_imports_by_file_path: HashMap<String, Vec<String>> = HashMap::new();
 
