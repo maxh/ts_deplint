@@ -23,7 +23,10 @@ fn main() -> Result<(), Box<dyn Error>> {
         pretty_print_violations(violations);
     }
     if command == "diagram" {
-        update_readme_with_diagram(&target.join("allow.yml"), &target.join("README.md"))?;
+        update_readme_with_diagram(
+            &target.join(".deplint.rules.yml"),
+            &target.join("README.md"),
+        )?;
     }
     Ok(())
 }

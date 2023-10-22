@@ -1,26 +1,16 @@
 extern crate serde_yaml;
 
-use serde::{Deserialize, Serialize};
-use std::collections::BTreeMap;
+use std::collections::HashMap;
 use std::error::Error;
 use std::fs;
 use std::io::{self, Write};
 use std::path::Path;
 
-#[derive(Debug, Deserialize, Serialize)]
-struct Allow(BTreeMap<String, Vec<String>>);
+use crate::rules::read_rules_file;
 
-fn get_allows(yaml_path: &Path) -> Result<Vec<String>, Box<dyn Error>> {
-    let allow_content = fs::read_to_string(yaml_path)?;
-    let allow: Allow = serde_yaml::from_str(&allow_content)?;
-
-    let mut allows = Vec::new();
-    for (source, targets) in allow.0.iter() {
-        for target in targets {
-            allows.push(format!("  {} --> {}", source, target));
-        }
-    }
-    Ok(allows)
+fn get_allows(yaml_path: &Path) -> Result<HashMap<String, Vec<String>>, Box<dyn Error>> {
+    let yaml_rules = read_rules_file(yaml_path)?;
+    return Ok(yaml_rules.allow);
 }
 
 fn get_other_readme_lines(readme_path: &Path) -> io::Result<(Vec<String>, Vec<String>)> {
@@ -64,7 +54,14 @@ pub fn update_readme_with_diagram(
     }
 
     let (before_dep_diagram_block, after_dep_diagram_block) = get_other_readme_lines(readme_path)?;
-    let mermaid_edges = allows.join("\n");
+    let mermaid_edges = allows
+        .iter()
+        .flat_map(|(source, targets)| {
+            targets
+                .iter()
+                .map(move |target| format!("  {} --> {}", source, target))
+        })
+        .collect::<Vec<String>>();
 
     let mut output_lines = Vec::new();
     output_lines.extend(before_dep_diagram_block);
@@ -72,7 +69,7 @@ pub fn update_readme_with_diagram(
     output_lines.push("%%dep".to_string());
     output_lines.push("graph TD".to_string());
     output_lines.push("  subgraph \" \"".to_string());
-    output_lines.extend(mermaid_edges.lines().map(|line| line.to_string()));
+    output_lines.extend(mermaid_edges);
     output_lines.push("  end".to_string());
     output_lines.push("```".to_string());
     output_lines.extend(after_dep_diagram_block);
