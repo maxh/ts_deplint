@@ -29,6 +29,7 @@ pub fn fix_violation(violation: &Violation) -> Result<(), Box<dyn std::error::Er
     let rules_path = Path::new(&common_prefix).join(RULES_FILE_NAME);
     let rules = read_rules_file(&rules_path);
     if let Ok(rules) = rules {
+        print!("Fixing {}... ", rules_path.to_str().unwrap());
         let mut rules = rules;
         let mut allow = rules.allow;
         let disallowed_imports = allow

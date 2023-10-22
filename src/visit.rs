@@ -18,7 +18,11 @@ pub fn visit_path(
         disallowed_imports,
         &current,
         &files,
+        abort_on_violation,
     )?);
+    if abort_on_violation && violations.len() > 0 {
+        return Ok(violations);
+    }
     violations.extend(visit_directories(
         root,
         disallowed_imports,
@@ -35,6 +39,7 @@ fn check_files_for_disallowed_imports(
     disallowed_imports: &Vec<String>,
     current: &Path,
     files: &Vec<String>,
+    abort_on_violation: bool,
 ) -> Result<Vec<Violation>, Box<dyn Error>> {
     let mut violations = Vec::new();
 
@@ -53,6 +58,9 @@ fn check_files_for_disallowed_imports(
                         disallowed_import: disallowed_import.clone(),
                     };
                     violations.push(violation);
+                    if abort_on_violation {
+                        return Ok(violations);
+                    }
                 }
             }
         }
