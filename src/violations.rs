@@ -93,10 +93,10 @@ where
                     .filter(|(d, _)| d == dir)
                     .map(|(_, disallowed_import)| disallowed_import)
                     .collect::<Vec<&String>>();
-                println!("  per rules in {}", dir);
                 for disallowed_import in disallowed_imports {
-                    println!("    {} is disallowed", disallowed_import);
+                    println!("  {} is disallowed", disallowed_import);
                 }
+                println!("    per rules in {}", common_prefix);
             }
         }
     }

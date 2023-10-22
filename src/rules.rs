@@ -4,7 +4,7 @@ use std::path::Path;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::error::Error;
-use std::io::Read;
+use std::io::{Read, Write};
 
 pub const RULES_FILE_NAME: &str = ".deplint.rules.yml";
 
@@ -57,4 +57,11 @@ pub fn read_rules_file(path: &Path) -> Result<Rules, Box<dyn Error>> {
     file.read_to_string(&mut yaml_content)?;
     let rules: Rules = serde_yaml::from_str(&yaml_content)?;
     Ok(rules)
+}
+
+pub fn write_rules_file(path: &Path, rules: &Rules) -> Result<(), Box<dyn Error>> {
+    let mut f = File::create(path)?;
+    let yaml_content = serde_yaml::to_string(rules)?;
+    f.write_all(yaml_content.as_bytes())?;
+    Ok(())
 }

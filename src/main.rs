@@ -43,6 +43,7 @@ fn update_diagrams_recursively(dir: &Path) -> Result<(), Box<dyn Error>> {
 ///  ts_deplint lint src/domain/user.ts
 ///  ts_deplint diagram src/.deplint.rules.yml
 ///  ts_deplint diagram src
+///  ts_deplint fix src
 ///
 /// Paths:
 ///
@@ -72,7 +73,7 @@ fn main() -> Result<(), Box<dyn Error>> {
                     eprintln!("Target path '{}' does not exist.", path);
                     std::process::exit(1);
                 }
-                let violations = list_violations(target)?;
+                let violations = list_violations(target, false)?;
                 all_violations.extend(violations);
             }
             if all_violations.len() > 0 {
@@ -91,6 +92,32 @@ fn main() -> Result<(), Box<dyn Error>> {
                 } else {
                     eprintln!("Target path '{}' is not a rules file or directory.", path);
                     std::process::exit(1);
+                }
+            }
+        }
+        "fix" => {
+            // Loop. On each iteration find a violation in any path and fix it. Stop
+            // when there are no more violations or when we've looped 500 times.
+            let mut i = 0;
+            for path in paths {
+                loop {
+                    let target = Path::new(path);
+                    if !target.exists() {
+                        eprintln!("Target path '{}' does not exist.", path);
+                        std::process::exit(1);
+                    }
+                    let violations = list_violations(target, true)?;
+                    if violations.len() == 0 {
+                        break;
+                    }
+                    for violation in violations {
+                        ts_deplint::fix_violation(&violation)?;
+                    }
+                    i += 1;
+                    if i > 500 {
+                        eprintln!("Looped 500 times. Something is wrong.");
+                        std::process::exit(1);
+                    }
                 }
             }
         }
