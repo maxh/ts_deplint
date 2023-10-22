@@ -21,7 +21,13 @@ fn main() -> Result<(), Box<dyn Error>> {
     if let Some(root) = root::find_package_json_directory(target) {
         let disallowed_imports =
             initial::get_initial_disallowed_imports(&root, target, vec![], &root);
-        visit::visit_path(root.as_ref(), disallowed_imports, target)?;
+        let violations = visit::visit_path(root.as_ref(), disallowed_imports, target)?;
+        if violations.len() > 0 {
+            println!("Found {} violations:", violations.len());
+            std::process::exit(1);
+        } else {
+            println!("No violations found.");
+        }
     } else {
         println!("No package.json found in any parent directory.");
     }
