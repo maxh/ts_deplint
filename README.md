@@ -1,3 +1,3 @@
 # ts_deplint
 
-A tool to lint dependencies with TypeScript projects.
+A tool to lint dependencies within TypeScript projects.
