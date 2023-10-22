@@ -33,7 +33,7 @@ fn main() -> Result<(), Box<dyn Error>> {
         "diagram" => {
             for path in paths {
                 let target = Path::new(path);
-                let rules_path = target.join(".deplint.rules.yml");
+                let rules_path = target.join(RULES_FILE_NAME);
                 let readme_path = target.join("README.md");
 
                 if !rules_path.exists() || !readme_path.exists() {

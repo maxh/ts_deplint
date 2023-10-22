@@ -10,6 +10,7 @@ mod violations;
 mod visit;
 
 pub use diagram::update_readme_with_diagram;
+pub use rules::RULES_FILE_NAME;
 pub use violations::pretty_print_violations;
 pub use violations::Violation;
 

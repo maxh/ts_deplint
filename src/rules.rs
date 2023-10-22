@@ -6,6 +6,8 @@ use std::collections::HashMap;
 use std::error::Error;
 use std::io::Read;
 
+pub static RULES_FILE_NAME: &str = ".deplint.rules.yml";
+
 #[derive(Serialize, Deserialize)]
 pub struct Rules {
     pub allow: HashMap<String, Vec<String>>,
@@ -44,7 +46,7 @@ fn find_difference(a: Vec<String>, b: Vec<String>) -> Vec<String> {
 }
 
 pub fn get_dir_rules(dir_path: &Path) -> Option<Rules> {
-    let rules_path = dir_path.join(".deplint.rules.yml");
+    let rules_path = dir_path.join(RULES_FILE_NAME);
     let rules_result = read_rules_file(&rules_path);
     return rules_result.ok();
 }
