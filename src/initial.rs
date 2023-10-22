@@ -19,25 +19,22 @@ fn get_initial_disallowed_imports_impl(
         .strip_prefix(current)
         .ok()
         .expect(format!("Failed to strip prefix {:?} from {:?}", current, target).as_str());
-    let first_directory =
-        get_first_directory(remainder).expect("Failed to read first directory from remainder.");
+    let next_dir_name = remainder
+        .components()
+        .nth(0)
+        .and_then(|component| component.as_os_str().to_str().map(String::from))
+        .expect("Failed to read next directory name.");
     let child_disallowed_imports = rules::get_child_disallowed_imports(
         root,
         current,
         &disallowed_imports,
         &rules::get_dir_rules(current),
-        &first_directory,
+        &next_dir_name,
     );
     return get_initial_disallowed_imports_impl(
         root,
         target,
         child_disallowed_imports,
-        &current.join(first_directory),
+        &current.join(next_dir_name),
     );
-}
-
-fn get_first_directory(path: &Path) -> Option<String> {
-    path.components()
-        .nth(0)
-        .and_then(|component| component.as_os_str().to_str().map(String::from))
 }
