@@ -8,11 +8,10 @@ pub fn visit_path(
     abort_on_violation: bool,
 ) -> Result<Vec<Violation>, Box<dyn Error>> {
     let map = files::list_files_and_directories(current)?;
-    let directories = map.get("directories").unwrap();
-    let files = map.get("files").unwrap();
 
     let mut violations = Vec::new();
 
+    let files = map.get("files").unwrap();
     violations.extend(check_files_for_disallowed_imports(
         root,
         disallowed_imports,
@@ -23,6 +22,8 @@ pub fn visit_path(
     if abort_on_violation && violations.len() > 0 {
         return Ok(violations);
     }
+
+    let directories = map.get("directories").unwrap();
     violations.extend(visit_directories(
         root,
         disallowed_imports,
@@ -94,6 +95,9 @@ fn visit_directories(
             &next,
             abort_on_violation,
         )?);
+        if abort_on_violation && violations.len() > 0 {
+            return Ok(violations);
+        }
     }
 
     Ok(violations)
