@@ -31,7 +31,10 @@ fn main() -> Result<(), Box<dyn Error>> {
                 let violations = list_violations(target)?;
                 all_violations.extend(violations);
             }
-            pretty_print_violations(all_violations);
+            if all_violations.len() > 0 {
+                pretty_print_violations(all_violations);
+                std::process::exit(2);
+            }
         }
         "diagram" => {
             for path in paths {
