@@ -33,21 +33,21 @@ fn update_diagrams_recursively(dir: &Path) -> Result<(), Box<dyn Error>> {
 ///
 /// Commands:
 ///
-///   lint     Lint the passed-in paths for disallowed imports.
-///   diagram  Update the README.md file in the passed-in paths with a diagram of the disallowed imports.
-///   fix      Fix the disallowed imports in the passed-in paths by adding allow rules.
-///   format   Format the rules files in the passed-in paths.
+///    lint     Lint the passed-in paths for disallowed imports.
+///    diagram  Update the README.md file in the passed-in paths with a diagram of the disallowed imports.
+///    fix      Fix the disallowed imports in the passed-in paths by adding allow rules.
+///    format   Format the rules files in the passed-in paths.
 ///
 /// Examples:
 ///
-///  ts_deplint lint src
-///  ts_deplint lint src/domain src/app
-///  ts_deplint lint src/domain/user.ts
-///  ts_deplint diagram src/.deplint.rules.yml
-///  ts_deplint diagram src
-///  ts_deplint fix src
-///  ts_depllint format src/.deplint.rules.yml
-///  ts_depllint format src
+///    ts_deplint lint src
+///    ts_deplint lint src/domain src/app
+///    ts_deplint lint src/domain/user.ts
+///    ts_deplint diagram src/.deplint.rules.yml
+///    ts_deplint diagram src
+///    ts_deplint fix src
+///    ts_depllint format src/.deplint.rules.yml
+///    ts_depllint format src
 ///
 /// Paths:
 ///
