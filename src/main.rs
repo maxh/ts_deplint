@@ -35,6 +35,8 @@ fn update_diagrams_recursively(dir: &Path) -> Result<(), Box<dyn Error>> {
 ///
 ///   lint     Lint the passed-in paths for disallowed imports.
 ///   diagram  Update the README.md file in the passed-in paths with a diagram of the disallowed imports.
+///   fix      Fix the disallowed imports in the passed-in paths by adding allow rules.
+///   format   Format the rules files in the passed-in paths.
 ///
 /// Examples:
 ///
@@ -44,6 +46,8 @@ fn update_diagrams_recursively(dir: &Path) -> Result<(), Box<dyn Error>> {
 ///  ts_deplint diagram src/.deplint.rules.yml
 ///  ts_deplint diagram src
 ///  ts_deplint fix src
+///  ts_depllint format src/.deplint.rules.yml
+///  ts_depllint format src
 ///
 /// Paths:
 ///
@@ -100,8 +104,6 @@ fn main() -> Result<(), Box<dyn Error>> {
             }
         }
         "fix" => {
-            // Loop. On each iteration find a violation in any path and fix it. Stop
-            // when there are no more violations or when we've looped 500 times.
             let mut i = 0;
             for path in paths {
                 loop {
@@ -132,7 +134,11 @@ fn main() -> Result<(), Box<dyn Error>> {
                     eprintln!("Target path '{}' does not exist.", path);
                     std::process::exit(1);
                 }
-                ts_deplint::format_rules_files(target)?;
+                if target.ends_with(RULES_FILE_NAME) {
+                    ts_deplint::format_rules_file(target)?;
+                } else {
+                    ts_deplint::format_rules_files_recursively(target)?;
+                }
             }
         }
         _ => {

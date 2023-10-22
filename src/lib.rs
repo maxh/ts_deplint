@@ -13,7 +13,8 @@ mod visit;
 
 pub use diagram::update_readme_with_diagram;
 pub use fix::fix_violation;
-pub use format::format_rules_files;
+pub use format::format_rules_file;
+pub use format::format_rules_files_recursively;
 pub use root::find_package_json_directory;
 pub use rules::RULES_FILE_NAME;
 pub use violations::pretty_print_violations;

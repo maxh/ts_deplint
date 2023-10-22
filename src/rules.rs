@@ -79,6 +79,8 @@ pub fn write_formatted_rules_file(path: &Path, rules: &Rules) -> Result<(), Box<
     }
     let new_rules = Rules::new_with_allow(new_allow);
     let yaml_content = serde_yaml::to_string(&new_rules)?;
+    // Replace " with '.
+    let yaml_content = yaml_content.replace("\"", "'");
     f.write_all(yaml_content.as_bytes())?;
     Ok(())
 }
