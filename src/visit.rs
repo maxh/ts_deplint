@@ -12,11 +12,8 @@ pub fn visit_path(
     let map = files::list_files_and_directories(current)?;
     let directories = map.get("directories").unwrap();
     let files = map.get("files").unwrap();
-    let rules_path = current.join(".deplint.rules.json");
-    let rules_result = rules::read_rules_file(&rules_path);
-    let rules = rules_result.ok();
 
-    visit_directories(root, &disallowed_imports, &rules, &current, &directories)?;
+    visit_directories(root, &disallowed_imports, &current, &directories)?;
     check_files_for_disallowed_imports(root, &disallowed_imports, &current, &files)?;
 
     Ok(())
@@ -53,20 +50,26 @@ fn check_files_for_disallowed_imports(
 fn visit_directories(
     root: &Path,
     disallowed_imports: &Vec<String>,
-    rules: &Option<Rules>,
     current: &Path,
     directories: &Vec<String>,
 ) -> Result<(), Box<dyn Error>> {
+    let current_rules = get_current_rules(current);
     for directory in directories {
         let next = current.join(directory);
-        let dir_disallowed_imports = rules::get_updated_disallowed_imports(
+        let dir_disallowed_imports = rules::get_child_disallowed_imports(
             root,
             current,
             disallowed_imports,
-            rules,
+            &current_rules,
             directory,
         );
         visit_path(root, dir_disallowed_imports, &next)?;
     }
     Ok(())
+}
+
+fn get_current_rules(current: &Path) -> Option<Rules> {
+    let rules_path = current.join(".deplint.rules.json");
+    let rules_result = rules::read_rules_file(&rules_path);
+    return rules_result.ok();
 }

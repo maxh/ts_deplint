@@ -57,7 +57,7 @@ pub fn read_rules_file(path: &Path) -> Result<Rules, Box<dyn Error>> {
     Ok(rules)
 }
 
-pub fn get_updated_disallowed_imports(
+pub fn get_child_disallowed_imports(
     root: &Path,
     current: &Path,
     disallowed_imports: &Vec<String>,
