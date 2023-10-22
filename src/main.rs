@@ -18,7 +18,7 @@ fn main() -> Result<(), Box<dyn Error>> {
 
     match command.as_str() {
         "lint" => {
-            let mut all_violations: HashSet<Violation> = HashSet::new(); // Use HashSet to ensure uniqueness
+            let mut all_violations: HashSet<Violation> = HashSet::new();
             for path in paths {
                 let target = Path::new(path);
                 if !target.exists() {
@@ -26,10 +26,8 @@ fn main() -> Result<(), Box<dyn Error>> {
                     std::process::exit(1);
                 }
                 let violations = list_violations(target)?;
-                all_violations.extend(violations); // Add violations to the HashSet
+                all_violations.extend(violations);
             }
-
-            // No need to convert to Vec, as HashSet is iterable
             pretty_print_violations(all_violations);
         }
         "diagram" => {
