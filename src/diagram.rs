@@ -54,7 +54,7 @@ pub fn update_readme_with_diagram(
     }
 
     let (before_dep_diagram_block, after_dep_diagram_block) = get_other_readme_lines(readme_path)?;
-    let mermaid_edges = allows
+    let mut mermaid_edges = allows
         .iter()
         .flat_map(|(source, targets)| {
             targets
@@ -62,6 +62,7 @@ pub fn update_readme_with_diagram(
                 .map(move |target| format!("  {} --> {}", source, target))
         })
         .collect::<Vec<String>>();
+    mermaid_edges.sort();
 
     let mut output_lines = Vec::new();
     output_lines.extend(before_dep_diagram_block);
