@@ -44,15 +44,15 @@ fn find_difference(a: Vec<String>, b: Vec<String>) -> Vec<String> {
 }
 
 pub fn get_dir_rules(dir_path: &Path) -> Option<Rules> {
-    let rules_path = dir_path.join(".deplint.rules.json");
+    let rules_path = dir_path.join(".deplint.rules.yml"); // Change the extension to `.yml`
     let rules_result = read_rules_file(&rules_path);
     return rules_result.ok();
 }
 
 fn read_rules_file(path: &Path) -> Result<Rules, Box<dyn Error>> {
     let mut file = File::open(path)?;
-    let mut json_content = String::new();
-    file.read_to_string(&mut json_content)?;
-    let rules: Rules = serde_json::from_str(&json_content)?;
+    let mut yaml_content = String::new(); // Changed variable name to reflect YAML content
+    file.read_to_string(&mut yaml_content)?; // Changed variable name to reflect YAML content
+    let rules: Rules = serde_yaml::from_str(&yaml_content)?; // Changed serde_json to serde_yaml
     Ok(rules)
 }
