@@ -2,7 +2,7 @@ use std::fs::File;
 use std::path::Path;
 
 use serde::{Deserialize, Serialize};
-use std::collections::{BTreeMap, HashMap};
+use std::collections::BTreeMap;
 use std::error::Error;
 use std::io::{Read, Write};
 
