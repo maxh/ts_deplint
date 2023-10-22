@@ -1,4 +1,5 @@
 use std::error::Error;
+use std::fs;
 use std::path::Path;
 use std::{collections::HashSet, env};
 
@@ -6,6 +7,23 @@ use ts_deplint::{
     list_violations, pretty_print_violations, update_readme_with_diagram, Violation,
     RULES_FILE_NAME,
 };
+
+/// Recursively find directories containing a rules file and update the diagram.
+fn update_diagrams_recursively(dir: &Path) -> Result<(), Box<dyn Error>> {
+    for entry in fs::read_dir(dir)? {
+        let entry = entry?;
+        let path = entry.path();
+        if path.is_dir() {
+            if path.join(RULES_FILE_NAME).exists() {
+                let readme_path = path.join("README.md");
+                update_readme_with_diagram(&path.join(RULES_FILE_NAME), &readme_path)?;
+            } else {
+                update_diagrams_recursively(&path)?;
+            }
+        }
+    }
+    Ok(())
+}
 
 /// ts_deplint is a tool for linting TypeScript projects for disallowed imports.
 ///
@@ -57,18 +75,12 @@ fn main() -> Result<(), Box<dyn Error>> {
         "diagram" => {
             for path in paths {
                 let target = Path::new(path);
-                let rules_path = target.join(RULES_FILE_NAME);
-                let readme_path = target.join("README.md");
-
-                if !rules_path.exists() {
-                    eprintln!(
-                        "Rules file does not exist in the target directory '{}'.",
-                        path
-                    );
+                if target.is_dir() {
+                    update_diagrams_recursively(&target)?;
+                } else {
+                    eprintln!("Target path '{}' is not a directory.", path);
                     std::process::exit(1);
                 }
-
-                update_readme_with_diagram(&rules_path, &readme_path)?;
             }
         }
         _ => {
