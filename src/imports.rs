@@ -2,21 +2,21 @@ use std::fs::File;
 use std::io::{self, BufRead};
 use std::path::Path;
 
-pub fn read_imports_from_file(file_path: &Path) -> io::Result<Vec<String>> {
-    let file = File::open(file_path)?;
-    let reader = io::BufReader::new(file);
+pub fn read_imports_from_file(ts_path: &Path) -> io::Result<Vec<String>> {
+    let ts_file = File::open(ts_path)?;
+    let reader = io::BufReader::new(ts_file);
 
-    let mut imports = Vec::new();
+    let mut ts_imports = Vec::new();
 
     for line in reader.lines() {
         let line = line?;
 
         if let Some(import) = extract_import(&line) {
-            imports.push(import);
+            ts_imports.push(import);
         }
     }
 
-    Ok(imports)
+    Ok(ts_imports)
 }
 
 fn extract_import(line: &str) -> Option<String> {
