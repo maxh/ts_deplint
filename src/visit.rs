@@ -17,7 +17,7 @@ pub fn visit_path(
     let rules = rules_result.ok();
 
     visit_directories(root, &disallowed_imports, &rules, &target, &directories)?;
-    check_files_for_disallowed_imports(&disallowed_imports, &target, &files)?;
+    check_files_for_disallowed_imports(root, &disallowed_imports, &target, &files)?;
 
     Ok(())
 }
@@ -50,6 +50,7 @@ fn visit_directories(
 }
 
 fn check_files_for_disallowed_imports(
+    root: &Path,
     disallowed_imports: &Vec<String>,
     target: &Path,
     files: &Vec<String>,
@@ -59,11 +60,16 @@ fn check_files_for_disallowed_imports(
             continue;
         }
         let full_path = target.join(file);
+        let relative_path = full_path.strip_prefix(root)?;
         let imports = imports::read_imports_from_file(&full_path)?;
         for import in imports {
             for disallowed_import in disallowed_imports {
                 if import.starts_with(disallowed_import) {
-                    println!("{} imports {}", full_path.to_str().expect(""), import);
+                    println!(
+                        "{} \n  imports from {}",
+                        relative_path.to_str().expect(""),
+                        disallowed_import,
+                    );
                 }
             }
         }
