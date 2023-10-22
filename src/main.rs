@@ -7,6 +7,24 @@ use ts_deplint::{
     RULES_FILE_NAME,
 };
 
+/// ts_deplint is a tool for linting TypeScript projects for disallowed imports.
+///
+/// Usage:
+///
+///    ts_deplint <command> <path1> <path2> ...
+///
+/// Commands:
+///
+///   lint     Lint the passed-in paths for disallowed imports.
+///   diagram  Update the README.md file in the passed-in paths with a diagram of the disallowed imports.
+///
+/// Paths:
+///
+///  Paths can be either directories or files.
+///
+/// # Errors
+///
+/// This function will return an error if anything goes wrong.
 fn main() -> Result<(), Box<dyn Error>> {
     let args: Vec<String> = env::args().collect();
 
