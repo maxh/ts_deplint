@@ -2,7 +2,7 @@ use std::env;
 use std::error::Error;
 use std::path::Path;
 
-use ts_deplint::{list_violations, pretty_print_violations};
+use ts_deplint::{list_violations, pretty_print_violations, update_readme_with_diagram};
 
 fn main() -> Result<(), Box<dyn Error>> {
     let args: Vec<String> = env::args().collect();
@@ -22,6 +22,8 @@ fn main() -> Result<(), Box<dyn Error>> {
         let violations = list_violations(target)?;
         pretty_print_violations(violations);
     }
-    if command == "diagram" {}
+    if command == "diagram" {
+        update_readme_with_diagram(&target.join("allow.yml"), &target.join("README.md"))?;
+    }
     Ok(())
 }

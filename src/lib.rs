@@ -1,5 +1,6 @@
 use std::{error::Error, path::Path};
 
+mod diagram;
 mod disallowed;
 mod files;
 mod imports;
@@ -8,8 +9,8 @@ mod rules;
 mod violations;
 mod visit;
 
+pub use diagram::update_readme_with_diagram;
 pub use violations::pretty_print_violations;
-pub use violations::Violation;
 
 pub fn list_violations(target: &Path) -> Result<Vec<violations::Violation>, Box<dyn Error>> {
     let root = root::find_package_json_directory(target)
