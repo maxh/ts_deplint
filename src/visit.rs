@@ -3,7 +3,7 @@ use std::{error::Error, path::Path};
 use crate::{files, imports, rules};
 
 pub fn visit_path(
-    root_path: &Path,
+    root: &Path,
     disallowed_imports: Vec<String>,
     target: &Path,
 ) -> Result<(), Box<dyn Error>> {
@@ -29,7 +29,7 @@ pub fn visit_path(
                 dir_disallowed_imports.extend(new_disallowed_imports);
             }
         }
-        visit_path(root_path, dir_disallowed_imports, &full_path)?;
+        visit_path(root, dir_disallowed_imports, &full_path)?;
     }
     if disallowed_imports.is_empty() {
         return Ok(());

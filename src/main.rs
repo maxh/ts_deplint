@@ -16,10 +16,10 @@ fn main() -> Result<(), Box<dyn Error>> {
         std::process::exit(1);
     }
 
-    let path = Path::new(&args[1]);
-    if let Some(root_path) = root::find_package_json_directory(path) {
-        println!("Found package.json in: {:?}", root_path);
-        visit::visit_path(root_path.as_ref(), vec![], path)?;
+    let target = Path::new(&args[1]);
+    if let Some(root) = root::find_package_json_directory(target) {
+        println!("Found package.json in: {:?}", root);
+        visit::visit_path(root.as_ref(), vec![], target)?;
     } else {
         println!("No package.json found in any parent directory.");
     }
