@@ -19,12 +19,12 @@ pub fn visit_path(
         let full_path = path.join(directory);
         let mut dir_disallowed_imports = disallowed_imports.clone();
         if let Some(rules) = &rules {
-            let disallowed_rules_result = rules.get_disallowed_siblings(&directory);
-            if let Some(disallowed_rules) = disallowed_rules_result {
-                let new_disallowed_imports = disallowed_rules
+            let disallowed_siblings_result = rules.get_disallowed_siblings(&directory);
+            if let Some(disallowed_siblings) = disallowed_siblings_result {
+                let new_disallowed_imports = disallowed_siblings
                     .iter()
-                    .map(|rule| format!("{}/{}", path.to_str().expect(""), rule))
-                    .map(|rule| rule.replace("/Users/maxheinritz/loop-payments/backend/src", "src"))
+                    .map(|s| format!("{}/{}", path.to_str().expect(""), s))
+                    .map(|s| s.replace("/Users/maxheinritz/loop-payments/backend/src", "src"))
                     .collect::<Vec<_>>();
                 dir_disallowed_imports.extend(new_disallowed_imports);
             }
