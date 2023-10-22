@@ -1,7 +1,8 @@
 use std::fs::File;
 use std::io::{self, BufRead};
+use std::path::Path;
 
-pub fn read_imports_from_file(file_path: &str) -> io::Result<Vec<String>> {
+pub fn read_imports_from_file(file_path: &Path) -> io::Result<Vec<String>> {
     let file = File::open(file_path)?;
     let reader = io::BufReader::new(file);
 

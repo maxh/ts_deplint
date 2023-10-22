@@ -1,9 +1,10 @@
 use std::collections::HashMap;
 use std::fs;
 use std::io;
+use std::path::Path;
 
 pub fn list_files_and_directories(
-    directory_path: &str,
+    directory_path: &Path,
 ) -> io::Result<HashMap<String, Vec<String>>> {
     let mut result = HashMap::new();
     let mut files = Vec::new();

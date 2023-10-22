@@ -1,4 +1,5 @@
 use std::fs::File;
+use std::path::Path;
 
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
@@ -11,7 +12,18 @@ pub struct Rules {
 }
 
 impl Rules {
-    pub fn extract_unique_names(&self) -> Vec<String> {
+    /// Returns a vector of sibling directory names that code in the
+    /// passed-in directory is disallowed to import.
+    pub fn get_disallowed_siblings(&self, dir: &str) -> Option<Vec<String>> {
+        let unique_dirs = self.extract_unique_dirs();
+        let allowed_dirs = self.get_allowed_siblings(dir)?;
+        let diff = find_difference(unique_dirs, allowed_dirs.clone());
+        // remove the director itself from the diff
+        let diff = diff.into_iter().filter(|x| x != dir).collect::<Vec<_>>();
+        Some(diff)
+    }
+
+    fn extract_unique_dirs(&self) -> Vec<String> {
         let mut unique_names = self.allow.keys().cloned().collect::<Vec<_>>();
 
         for names in self.allow.values() {
@@ -26,17 +38,8 @@ impl Rules {
         unique_names
     }
 
-    pub fn get_allow_rules(&self, key: &str) -> Option<&Vec<String>> {
-        self.allow.get(key)
-    }
-
-    pub fn get_disallowed_rules(&self, key: &str) -> Option<Vec<String>> {
-        let unique_names = self.extract_unique_names();
-        let allow_rules = self.get_allow_rules(key)?;
-        let diff = find_difference(unique_names, allow_rules.clone());
-        // remove the key from the diff
-        let diff = diff.into_iter().filter(|x| x != key).collect::<Vec<_>>();
-        Some(diff)
+    fn get_allowed_siblings(&self, dir: &str) -> Option<&Vec<String>> {
+        self.allow.get(dir)
     }
 }
 
@@ -44,8 +47,8 @@ fn find_difference(a: Vec<String>, b: Vec<String>) -> Vec<String> {
     a.into_iter().filter(|x| !b.contains(x)).collect()
 }
 
-pub fn parse_rules_file(file_path: &str) -> Result<Rules, Box<dyn Error>> {
-    let mut file = File::open(file_path)?;
+pub fn read_rules_file(path: &Path) -> Result<Rules, Box<dyn Error>> {
+    let mut file = File::open(path)?;
     let mut json_content = String::new();
     file.read_to_string(&mut json_content)?;
 

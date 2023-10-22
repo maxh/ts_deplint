@@ -1,11 +1,12 @@
 use std::env;
 use std::error::Error;
+use std::path::Path;
 
-mod list_files_and_directories;
-mod parse_rules_file;
-mod ts_import_extractor;
-
-mod visit_directory;
+mod files;
+mod imports;
+mod root;
+mod rules;
+mod visit;
 
 fn main() -> Result<(), Box<dyn Error>> {
     let args: Vec<String> = env::args().collect();
@@ -14,7 +15,13 @@ fn main() -> Result<(), Box<dyn Error>> {
         eprintln!("Usage: {} <path>", args[0]);
         std::process::exit(1);
     }
-    let path = &args[1];
-    visit_directory::visit_directory(vec![], path)?;
+
+    let path = Path::new(&args[1]);
+    if let Some(root_path) = root::find_package_json_directory(path) {
+        println!("Found package.json in: {:?}", root_path);
+        visit::visit_path(root_path.as_ref(), vec![], path)?;
+    } else {
+        println!("No package.json found in any parent directory.");
+    }
     Ok(())
 }
