@@ -1,11 +1,5 @@
-use crate::{files, imports, rules};
+use crate::{files, imports, rules, violations::Violation};
 use std::{error::Error, path::Path};
-
-#[derive(Debug)]
-pub struct Violation {
-    pub file_path: String,
-    pub disallowed_import: String,
-}
 
 pub fn visit_path(
     root: &Path,

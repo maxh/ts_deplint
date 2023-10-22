@@ -7,6 +7,7 @@ mod imports;
 mod initial;
 mod root;
 mod rules;
+mod violations;
 mod visit;
 
 fn main() -> Result<(), Box<dyn Error>> {
@@ -22,12 +23,7 @@ fn main() -> Result<(), Box<dyn Error>> {
         let disallowed_imports =
             initial::get_initial_disallowed_imports(&root, target, vec![], &root);
         let violations = visit::visit_path(root.as_ref(), disallowed_imports, target)?;
-        if violations.len() > 0 {
-            println!("Found {} violations:", violations.len());
-            std::process::exit(1);
-        } else {
-            println!("No violations found.");
-        }
+        violations::pretty_print_violations(violations);
     } else {
         println!("No package.json found in any parent directory.");
     }
