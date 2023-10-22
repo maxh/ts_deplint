@@ -1,9 +1,31 @@
 use std::path::Path;
 
-use crate::rules;
+use crate::rules::{self, Rules};
 
 pub fn get_initial_disallowed_imports(root: &Path, target: &Path) -> Vec<String> {
     return get_initial_disallowed_imports_impl(root, target, vec![], &root);
+}
+
+pub fn get_child_disallowed_imports(
+    root: &Path,
+    current: &Path,
+    disallowed_imports: &Vec<String>,
+    rules: &Option<Rules>,
+    directory: &str,
+) -> Vec<String> {
+    let mut dir_disallowed_imports = disallowed_imports.clone();
+    if let Some(rules) = rules {
+        if let Some(disallowed_siblings) = rules.get_disallowed_siblings(&directory) {
+            let new_disallowed_imports = disallowed_siblings
+                .iter()
+                .map(|s| current.join(s))
+                .filter_map(|p| p.strip_prefix(root).ok().map(|p| p.to_path_buf()))
+                .map(|p| p.to_str().expect("").to_string())
+                .collect::<Vec<_>>();
+            dir_disallowed_imports.extend(new_disallowed_imports);
+        }
+    }
+    dir_disallowed_imports
 }
 
 fn get_initial_disallowed_imports_impl(
@@ -24,7 +46,7 @@ fn get_initial_disallowed_imports_impl(
         .nth(0)
         .and_then(|component| component.as_os_str().to_str().map(String::from))
         .expect("Failed to read next directory name.");
-    let child_disallowed_imports = rules::get_child_disallowed_imports(
+    let child_disallowed_imports = get_child_disallowed_imports(
         root,
         current,
         &disallowed_imports,

@@ -39,36 +39,14 @@ impl Rules {
     }
 }
 
+fn find_difference(a: Vec<String>, b: Vec<String>) -> Vec<String> {
+    a.into_iter().filter(|x| !b.contains(x)).collect()
+}
+
 pub fn get_dir_rules(dir_path: &Path) -> Option<Rules> {
     let rules_path = dir_path.join(".deplint.rules.json");
     let rules_result = read_rules_file(&rules_path);
     return rules_result.ok();
-}
-
-pub fn get_child_disallowed_imports(
-    root: &Path,
-    current: &Path,
-    disallowed_imports: &Vec<String>,
-    rules: &Option<Rules>,
-    directory: &str,
-) -> Vec<String> {
-    let mut dir_disallowed_imports = disallowed_imports.clone();
-    if let Some(rules) = rules {
-        if let Some(disallowed_siblings) = rules.get_disallowed_siblings(&directory) {
-            let new_disallowed_imports = disallowed_siblings
-                .iter()
-                .map(|s| current.join(s))
-                .filter_map(|p| p.strip_prefix(root).ok().map(|p| p.to_path_buf()))
-                .map(|p| p.to_str().expect("").to_string())
-                .collect::<Vec<_>>();
-            dir_disallowed_imports.extend(new_disallowed_imports);
-        }
-    }
-    dir_disallowed_imports
-}
-
-fn find_difference(a: Vec<String>, b: Vec<String>) -> Vec<String> {
-    a.into_iter().filter(|x| !b.contains(x)).collect()
 }
 
 fn read_rules_file(path: &Path) -> Result<Rules, Box<dyn Error>> {

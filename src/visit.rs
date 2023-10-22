@@ -1,4 +1,4 @@
-use crate::{files, imports, rules, violations::Violation};
+use crate::{disallowed_imports, files, imports, rules, violations::Violation};
 use std::{error::Error, path::Path};
 
 pub fn visit_path(
@@ -69,7 +69,7 @@ fn visit_directories(
 
     let current_rules = rules::get_dir_rules(current);
     for child in directories {
-        let dir_disallowed_imports = rules::get_child_disallowed_imports(
+        let dir_disallowed_imports = disallowed_imports::get_child_disallowed_imports(
             root,
             current,
             disallowed_imports,
