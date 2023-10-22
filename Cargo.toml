@@ -1,9 +1,9 @@
 [package]
 name = "ts_deplint"
-version = "0.1.0"
+version = "0.0.1"
 edition = "2021"
 repository = "https://github.com/maxh/ts_deplint"
-descrtion = "A tool to lint dependencies within TypeScript projects"
+description = "A tool to lint dependencies within TypeScript projects"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
