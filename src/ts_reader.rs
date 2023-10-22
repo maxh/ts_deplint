@@ -2,17 +2,26 @@ use std::fs::File;
 use std::io::{self, BufRead};
 use std::path::Path;
 
-pub fn read_imports_from_file(ts_path: &Path) -> io::Result<Vec<String>> {
+const IGNORE_COMMENT: &str = "// ts_deplint ignore";
+
+pub fn read_ts_imports(ts_path: &Path) -> io::Result<Vec<String>> {
     let ts_file = File::open(ts_path)?;
     let reader = io::BufReader::new(ts_file);
 
     let mut ts_imports = Vec::new();
 
+    let mut curr_line: String = "".to_string();
+    let mut prev_line: String;
     for line in reader.lines() {
-        let line = line?;
+        prev_line = curr_line;
+        curr_line = line?;
 
-        if let Some(import) = extract_import(&line) {
-            ts_imports.push(import);
+        if prev_line.contains(IGNORE_COMMENT) {
+            continue;
+        }
+
+        if let Some(ts_import) = extract_import(&curr_line) {
+            ts_imports.push(ts_import);
         }
     }
 

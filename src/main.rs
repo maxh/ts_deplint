@@ -42,9 +42,9 @@ fn main() -> Result<(), Box<dyn Error>> {
                 let rules_path = target.join(RULES_FILE_NAME);
                 let readme_path = target.join("README.md");
 
-                if !rules_path.exists() || !readme_path.exists() {
+                if !rules_path.exists() {
                     eprintln!(
-                        "Required files do not exist in the target directory '{}'.",
+                        "Rules file does not exist in the target directory '{}'.",
                         path
                     );
                     std::process::exit(1);

@@ -6,7 +6,7 @@ use std::collections::HashMap;
 use std::error::Error;
 use std::io::Read;
 
-pub static RULES_FILE_NAME: &str = ".deplint.rules.yml";
+pub const RULES_FILE_NAME: &str = ".deplint.rules.yml";
 
 #[derive(Serialize, Deserialize)]
 pub struct Rules {

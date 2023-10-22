@@ -1,4 +1,4 @@
-use crate::{disallowed, files, imports, rules, violations::Violation};
+use crate::{disallowed, files, rules, ts_reader, violations::Violation};
 use std::{error::Error, path::Path};
 
 pub fn visit_path(
@@ -42,7 +42,7 @@ fn check_files_for_disallowed_imports(
         }
         let full_path = current.join(file);
         let relative_path = full_path.strip_prefix(root)?;
-        let imports = imports::read_imports_from_file(&full_path)?;
+        let imports = ts_reader::read_ts_imports(&full_path)?;
         for import in imports {
             for disallowed_import in disallowed_imports {
                 if import.starts_with(disallowed_import) {

@@ -3,9 +3,9 @@ use std::{error::Error, path::Path};
 mod diagram;
 mod disallowed;
 mod files;
-mod imports;
 mod root;
 mod rules;
+mod ts_reader;
 mod violations;
 mod visit;
 
