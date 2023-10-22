@@ -1,7 +1,4 @@
-use crate::{
-    files, imports,
-    rules::{self, Rules},
-};
+use crate::{files, imports, rules};
 use std::{error::Error, path::Path};
 
 pub fn visit_path(
@@ -53,23 +50,17 @@ fn visit_directories(
     current: &Path,
     directories: &Vec<String>,
 ) -> Result<(), Box<dyn Error>> {
-    let current_rules = get_current_rules(current);
-    for directory in directories {
-        let next = current.join(directory);
+    let current_rules = rules::get_dir_rules(current);
+    for child in directories {
         let dir_disallowed_imports = rules::get_child_disallowed_imports(
             root,
             current,
             disallowed_imports,
             &current_rules,
-            directory,
+            child,
         );
+        let next = current.join(child);
         visit_path(root, dir_disallowed_imports, &next)?;
     }
     Ok(())
-}
-
-fn get_current_rules(current: &Path) -> Option<Rules> {
-    let rules_path = current.join(".deplint.rules.json");
-    let rules_result = rules::read_rules_file(&rules_path);
-    return rules_result.ok();
 }

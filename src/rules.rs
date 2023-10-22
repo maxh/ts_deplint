@@ -47,7 +47,7 @@ fn find_difference(a: Vec<String>, b: Vec<String>) -> Vec<String> {
     a.into_iter().filter(|x| !b.contains(x)).collect()
 }
 
-pub fn read_rules_file(path: &Path) -> Result<Rules, Box<dyn Error>> {
+fn read_rules_file(path: &Path) -> Result<Rules, Box<dyn Error>> {
     let mut file = File::open(path)?;
     let mut json_content = String::new();
     file.read_to_string(&mut json_content)?;
@@ -55,6 +55,12 @@ pub fn read_rules_file(path: &Path) -> Result<Rules, Box<dyn Error>> {
     let rules: Rules = serde_json::from_str(&json_content)?;
 
     Ok(rules)
+}
+
+pub fn get_dir_rules(dir_path: &Path) -> Option<Rules> {
+    let rules_path = dir_path.join(".deplint.rules.json");
+    let rules_result = read_rules_file(&rules_path);
+    return rules_result.ok();
 }
 
 pub fn get_child_disallowed_imports(
