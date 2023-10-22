@@ -1,6 +1,6 @@
 use std::path::Path;
 
-use crate::rules::{read_rules_file, write_rules_file};
+use crate::rules::{read_rules_file, write_formatted_rules_file};
 use crate::{Violation, RULES_FILE_NAME};
 
 pub fn fix_violation(root: &Path, violation: &Violation) -> Result<(), Box<dyn std::error::Error>> {
@@ -39,5 +39,5 @@ pub fn fix_violation(root: &Path, violation: &Violation) -> Result<(), Box<dyn s
     disallowed_imports.sort();
     disallowed_imports.dedup();
     rules.allow = allow;
-    return write_rules_file(&rules_path, &rules);
+    return write_formatted_rules_file(&rules_path, &rules);
 }

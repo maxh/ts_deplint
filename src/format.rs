@@ -22,7 +22,7 @@ pub fn format_rules_files(target: &Path) -> Result<(), Box<dyn std::error::Error
     for directory in directories {
         let p = directory.join(RULES_FILE_NAME);
         let r = rules::read_rules_file(&p)?;
-        rules::write_rules_file(&p, &r)?;
+        rules::write_formatted_rules_file(&p, &r)?;
     }
     Ok(())
 }

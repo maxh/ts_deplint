@@ -1,6 +1,6 @@
 extern crate serde_yaml;
 
-use std::collections::HashMap;
+use std::collections::BTreeMap;
 use std::error::Error;
 use std::fs;
 use std::io::{self, Write};
@@ -8,7 +8,7 @@ use std::path::Path;
 
 use crate::rules::read_rules_file;
 
-fn get_allows(yaml_path: &Path) -> Result<HashMap<String, Vec<String>>, Box<dyn Error>> {
+fn get_allows(yaml_path: &Path) -> Result<BTreeMap<String, Vec<String>>, Box<dyn Error>> {
     let yaml_rules = read_rules_file(yaml_path)?;
     return Ok(yaml_rules.allow);
 }
