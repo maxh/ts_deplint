@@ -2,7 +2,7 @@ use std::env;
 use std::error::Error;
 use std::path::Path;
 
-use ts_import_extractor::{list_violations, pretty_print_violations};
+use ts_deplint::{list_violations, pretty_print_violations};
 
 fn main() -> Result<(), Box<dyn Error>> {
     let args: Vec<String> = env::args().collect();
