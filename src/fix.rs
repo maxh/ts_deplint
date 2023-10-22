@@ -3,7 +3,7 @@ use std::path::Path;
 use crate::rules::{read_rules_file, write_rules_file};
 use crate::{Violation, RULES_FILE_NAME};
 
-pub fn fix_violation(violation: &Violation) -> Result<(), Box<dyn std::error::Error>> {
+pub fn fix_violation(root: &Path, violation: &Violation) -> Result<(), Box<dyn std::error::Error>> {
     let file_path = &violation.file_path;
     let disallowed_import = &violation.disallowed_import;
     let mut common_prefix = file_path
@@ -26,21 +26,18 @@ pub fn fix_violation(violation: &Violation) -> Result<(), Box<dyn std::error::Er
         .skip(common_prefix.len())
         .take_while(|c| *c != '/')
         .collect::<String>();
-    let rules_path = Path::new(&common_prefix).join(RULES_FILE_NAME);
+    let rules_path = root.join(common_prefix).join(RULES_FILE_NAME);
     println!("rules_path: {:?}", rules_path);
-    let rules = read_rules_file(&rules_path);
-    if let Ok(rules) = rules {
-        print!("Fixing {}... ", rules_path.to_str().unwrap());
-        let mut rules = rules;
-        let mut allow = rules.allow;
-        let disallowed_imports = allow
-            .entry(dir_after_common_prefix)
-            .or_insert_with(Vec::new);
-        disallowed_imports.push(disallowed_after_common_prefix);
-        disallowed_imports.sort();
-        disallowed_imports.dedup();
-        rules.allow = allow;
-        return write_rules_file(&rules_path, &rules);
-    }
-    Ok(())
+    let rules = read_rules_file(&rules_path)?;
+    print!("Fixing {}... ", rules_path.to_str().unwrap());
+    let mut rules = rules;
+    let mut allow = rules.allow;
+    let disallowed_imports = allow
+        .entry(dir_after_common_prefix)
+        .or_insert_with(Vec::new);
+    disallowed_imports.push(disallowed_after_common_prefix);
+    disallowed_imports.sort();
+    disallowed_imports.dedup();
+    rules.allow = allow;
+    return write_rules_file(&rules_path, &rules);
 }

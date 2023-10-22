@@ -4,8 +4,8 @@ use std::path::Path;
 use std::{collections::HashSet, env};
 
 use ts_deplint::{
-    list_violations, pretty_print_violations, update_readme_with_diagram, Violation,
-    RULES_FILE_NAME,
+    find_package_json_directory, list_violations, pretty_print_violations,
+    update_readme_with_diagram, Violation, RULES_FILE_NAME,
 };
 
 /// Recursively find directories containing a rules file and update the diagram.
@@ -64,6 +64,10 @@ fn main() -> Result<(), Box<dyn Error>> {
 
     let paths: Vec<&str> = args.iter().skip(2).map(|s| s.as_str()).collect();
 
+    let sample_path = Path::new(paths[0]);
+    let root = find_package_json_directory(sample_path)
+        .ok_or("No package.json found in any parent directory.")?;
+
     match command.as_str() {
         "lint" => {
             let mut all_violations: HashSet<Violation> = HashSet::new();
@@ -73,7 +77,7 @@ fn main() -> Result<(), Box<dyn Error>> {
                     eprintln!("Target path '{}' does not exist.", path);
                     std::process::exit(1);
                 }
-                let violations = list_violations(target, false)?;
+                let violations = list_violations(&root, target, false)?;
                 all_violations.extend(violations);
             }
             if all_violations.len() > 0 {
@@ -107,13 +111,13 @@ fn main() -> Result<(), Box<dyn Error>> {
                         std::process::exit(1);
                     }
                     println!("Looping through {}...", path);
-                    let violations = list_violations(target, true)?;
+                    let violations = list_violations(&root, target, true)?;
                     if violations.len() == 0 {
                         break;
                     }
                     println!("Found {} violations.", violations.len());
                     for violation in violations {
-                        ts_deplint::fix_violation(&violation)?;
+                        ts_deplint::fix_violation(&root, &violation)?;
                     }
                     i += 1;
                     if i > 500 {
@@ -121,6 +125,16 @@ fn main() -> Result<(), Box<dyn Error>> {
                         std::process::exit(1);
                     }
                 }
+            }
+        }
+        "format" => {
+            for path in paths {
+                let target = Path::new(path);
+                if !target.exists() {
+                    eprintln!("Target path '{}' does not exist.", path);
+                    std::process::exit(1);
+                }
+                ts_deplint::format_rules_files(target)?;
             }
         }
         _ => {
