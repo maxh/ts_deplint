@@ -67,7 +67,6 @@ pub fn read_rules_file(path: &Path) -> Result<Rules, Box<dyn Error>> {
 pub fn write_formatted_rules_file(path: &Path, rules: &Rules) -> Result<(), Box<dyn Error>> {
     let mut f = File::create(path)?;
     // Sort the keys within the allow map.
-    let rules = rules.clone();
     let mut allow = rules.allow.clone();
     let mut keys = allow.keys().cloned().collect::<Vec<_>>();
     keys.sort();
