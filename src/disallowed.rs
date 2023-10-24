@@ -29,7 +29,7 @@ pub fn get_child_disallowed_imports(
         }
     }
 
-    return dir_disallowed_imports
+    return dir_disallowed_imports;
 }
 
 fn get_initial_disallowed_imports_impl(
@@ -48,10 +48,5 @@ fn get_initial_disallowed_imports_impl(
         &rules::get_dir_rules(current),
         target,
     );
-    return get_initial_disallowed_imports_impl(
-        root,
-        target,
-        child_disallowed_imports,
-        target,
-    );
+    return get_initial_disallowed_imports_impl(root, target, child_disallowed_imports, target);
 }

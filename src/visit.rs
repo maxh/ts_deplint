@@ -1,5 +1,8 @@
 use crate::{disallowed, files, rules, ts_reader, violations::Violation};
-use std::{error::Error, path::{Path, PathBuf}};
+use std::{
+    error::Error,
+    path::{Path, PathBuf},
+};
 
 pub fn visit_path(
     violations: &mut Vec<Violation>,
