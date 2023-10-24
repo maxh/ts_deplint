@@ -8,9 +8,7 @@ pub struct FilesAndDirectories {
     pub directories: Vec<PathBuf>,
 }
 
-pub fn list_files_and_directories(
-    directory_path: &Path,
-) -> io::Result<FilesAndDirectories> {
+pub fn list_files_and_directories(directory_path: &Path) -> io::Result<FilesAndDirectories> {
     let mut files = Vec::new();
     let mut directories = Vec::new();
 
@@ -24,8 +22,5 @@ pub fn list_files_and_directories(
         }
     }
 
-    Ok(FilesAndDirectories {
-        files,
-        directories,
-    })
+    Ok(FilesAndDirectories { files, directories })
 }

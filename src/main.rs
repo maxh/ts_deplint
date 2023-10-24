@@ -1,8 +1,8 @@
+use clap::{Parser, Subcommand};
+use std::collections::HashSet;
 use std::error::Error;
 use std::fs;
 use std::path::Path;
-use std::collections::HashSet;
-use clap::{Parser, Subcommand};
 
 use ts_deplint::{
     find_package_json_directory, list_violations, pretty_print_violations,
@@ -27,10 +27,8 @@ fn update_diagrams_recursively(dir: &Path) -> Result<(), Box<dyn Error>> {
 }
 
 #[derive(Parser)]
-#[clap(
-     name = "ts_depslint",
- )]
- /// ts_deplint is a tool for linting TypeScript projects for disallowed imports.
+#[clap(name = "ts_depslint")]
+/// ts_deplint is a tool for linting TypeScript projects for disallowed imports.
 struct Opt {
     #[clap(subcommand)]
     command: Commands,
@@ -45,9 +43,7 @@ enum Commands {
 }
 
 #[derive(Parser)]
-#[clap(
-    rename_all = "camel_case",
-)]
+#[clap(rename_all = "camel_case")]
 /// Lint the passed-in paths for disallowed imports.
 struct LintCommand {
     #[arg(last = true)]
@@ -56,9 +52,7 @@ struct LintCommand {
 }
 
 #[derive(Parser)]
-#[clap(
-    rename_all = "camel_case",
-)]
+#[clap(rename_all = "camel_case")]
 /// Update the README.md file in the passed-in paths with a diagram of the disallowed imports.
 struct DiagramCommand {
     #[arg(last = true)]
@@ -67,9 +61,7 @@ struct DiagramCommand {
 }
 
 #[derive(Parser)]
-#[clap(
-    rename_all = "camel_case",
-)]
+#[clap(rename_all = "camel_case")]
 /// Fix the disallowed imports in the passed-in paths by adding allow rules.
 struct FixCommand {
     #[arg(last = true)]
@@ -78,9 +70,7 @@ struct FixCommand {
 }
 
 #[derive(Parser)]
-#[clap(
-    rename_all = "camel_case",
-)]
+#[clap(rename_all = "camel_case")]
 /// Format the rules files in the passed-in paths.
 struct FormatCommand {
     #[arg(last = true)]
@@ -92,7 +82,7 @@ fn main() -> Result<(), Box<dyn Error>> {
     let opt = Opt::parse();
 
     match opt.command {
-        Commands::Lint( command ) =>  run_lint_command(command),
+        Commands::Lint(command) => run_lint_command(command),
         Commands::Diagram(command) => run_diagram_command(command),
         Commands::Fix(command) => run_fix_command(command),
         Commands::Format(command) => run_format_command(command),
@@ -115,7 +105,7 @@ fn run_lint_command(command: LintCommand) -> Result<(), Box<dyn Error>> {
     }
 
     if all_violations.len() > 0 {
-        let count =  all_violations.len();
+        let count = all_violations.len();
         pretty_print_violations(all_violations);
         return Err(format!("{} violations.", count).into());
     }
@@ -132,7 +122,7 @@ fn run_diagram_command(command: DiagramCommand) -> Result<(), Box<dyn Error>> {
         } else if target.is_dir() {
             update_diagrams_recursively(&target)?;
         } else {
-            return Err(format!("Target path '{}' is not a rules file or directory.", path).into())
+            return Err(format!("Target path '{}' is not a rules file or directory.", path).into());
         }
     }
 
@@ -169,7 +159,7 @@ fn run_fix_command(command: FixCommand) -> Result<(), Box<dyn Error>> {
     Ok(())
 }
 
-fn run_format_command(command: FormatCommand) -> Result<(), Box<dyn Error>>  {
+fn run_format_command(command: FormatCommand) -> Result<(), Box<dyn Error>> {
     for path in command.paths.iter() {
         let target = Path::new(path);
         if !target.exists() {

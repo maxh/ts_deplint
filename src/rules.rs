@@ -4,7 +4,7 @@ use std::path::Path;
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
 use std::error::Error;
-use std::io::{Write};
+use std::io::Write;
 
 pub const RULES_FILE_NAME: &str = ".deplint.rules.yml";
 
@@ -25,7 +25,10 @@ impl Rules {
         let unique_dirs = self.extract_unique_dirs();
         let allowed_dirs = self.get_allowed_siblings(dirname).unwrap_or(vec![]);
         let diff = find_difference(&unique_dirs, &allowed_dirs);
-        let diff = diff.into_iter().filter(|x| *x != dirname).collect::<Vec<_>>();
+        let diff = diff
+            .into_iter()
+            .filter(|x| *x != dirname)
+            .collect::<Vec<_>>();
         Some(diff)
     }
 
@@ -49,7 +52,10 @@ impl Rules {
 }
 
 fn find_difference<'a>(a: &[&'a str], b: &[&'a str]) -> Vec<&'a str> {
-    a.iter().filter(|x| !b.contains(x)).map(|s| *s).collect::<Vec<&str>>()
+    a.iter()
+        .filter(|x| !b.contains(x))
+        .map(|s| *s)
+        .collect::<Vec<&str>>()
 }
 
 pub fn get_dir_rules(dir_path: &Path) -> Option<Rules> {

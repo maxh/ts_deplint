@@ -1,5 +1,5 @@
-use std::path::Path;
 use std::fs;
+use std::path::Path;
 
 use crate::{rules, RULES_FILE_NAME};
 
@@ -19,7 +19,7 @@ pub fn format_rules_files_recursively(target: &Path) -> Result<(), Box<dyn std::
     let directories = fs::read_dir(&target)?.filter_map(|r| {
         if let Ok(entry) = r {
             if entry.path().is_file() {
-                return Some(entry.path())
+                return Some(entry.path());
             }
         }
 
