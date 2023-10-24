@@ -1,12 +1,15 @@
-use std::collections::HashMap;
 use std::fs;
 use std::io;
 use std::path::Path;
 
+pub struct FilesAndDirectories {
+    pub files: Vec<String>,
+    pub directories: Vec<String>,
+}
+
 pub fn list_files_and_directories(
     directory_path: &Path,
-) -> io::Result<HashMap<String, Vec<String>>> {
-    let mut result = HashMap::new();
+) -> io::Result<FilesAndDirectories> {
     let mut files = Vec::new();
     let mut directories = Vec::new();
 
@@ -25,8 +28,8 @@ pub fn list_files_and_directories(
         }
     }
 
-    result.insert("files".to_string(), files);
-    result.insert("directories".to_string(), directories);
-
-    Ok(result)
+    Ok(FilesAndDirectories {
+        files,
+        directories,
+    })
 }
