@@ -1,5 +1,5 @@
 use crate::{disallowed, files, rules, ts_reader, violations::Violation};
-use std::{error::Error, path::Path};
+use std::{error::Error, path::{Path, PathBuf}};
 
 pub fn visit_path(
     violations: &mut Vec<Violation>,
@@ -14,7 +14,6 @@ pub fn visit_path(
         violations,
         root,
         disallowed_imports,
-        &current,
         &files_and_directories.files,
         abort_on_violation,
     )?;
@@ -38,15 +37,13 @@ fn check_files_for_disallowed_imports(
     violations: &mut Vec<Violation>,
     root: &Path,
     disallowed_imports: &Vec<String>,
-    current: &Path,
-    files: &Vec<String>,
+    files: &[PathBuf],
     abort_on_violation: bool,
 ) -> Result<(), Box<dyn Error>> {
-    for file in files {
-        if !file.ends_with(".ts") {
+    for full_path in files {
+        if !full_path.ends_with(".ts") {
             continue;
         }
-        let full_path = current.join(file);
         let relative_path = full_path.strip_prefix(root)?;
         let imports = ts_reader::read_ts_imports(&full_path)?;
         for import in imports {
@@ -73,14 +70,13 @@ fn visit_directories(
     root: &Path,
     disallowed_imports: &Vec<String>,
     current: &Path,
-    directories: &Vec<String>,
+    directories: &[PathBuf],
     abort_on_violation: bool,
 ) -> Result<(), Box<dyn Error>> {
     let current_rules = rules::get_dir_rules(current);
     for child in directories {
         let dir_disallowed_imports = disallowed::get_child_disallowed_imports(
             root,
-            current,
             disallowed_imports,
             &current_rules,
             child,
