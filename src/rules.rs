@@ -4,7 +4,7 @@ use std::path::Path;
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
 use std::error::Error;
-use std::io::{Read, Write};
+use std::io::{Write};
 
 pub const RULES_FILE_NAME: &str = ".deplint.rules.yml";
 
@@ -21,17 +21,18 @@ impl Rules {
 
     /// Returns a vector of sibling directory names that code in the
     /// passed-in directory is disallowed to import.
-    pub fn get_disallowed_siblings(&self, dir: &str) -> Option<Vec<&str>> {
+    pub fn get_disallowed_siblings(&self, dirname: &str) -> Option<Vec<&str>> {
         let unique_dirs = self.extract_unique_dirs();
-        let allowed_dirs = self.get_allowed_siblings(dir).unwrap_or(vec![]);
+        let allowed_dirs = self.get_allowed_siblings(dirname).unwrap_or(vec![]);
         let diff = find_difference(&unique_dirs, &allowed_dirs);
-        let diff = diff.into_iter().filter(|x| *x != dir).collect::<Vec<_>>();
+        let diff = diff.into_iter().filter(|x| *x != dirname).collect::<Vec<_>>();
         Some(diff)
     }
 
     fn extract_unique_dirs(&self) -> Vec<&str> {
-        let mut unique_names = self.allow.keys().map(|s| s.as_str()).collect::<Vec<&str>>();
-        for names in self.allow.values() {
+        let mut unique_names = Vec::with_capacity(self.allow.len());
+        for (key, names) in self.allow.iter() {
+            unique_names.push(key.as_str());
             for name in names {
                 unique_names.push(name.as_str());
             }
@@ -41,8 +42,8 @@ impl Rules {
         unique_names
     }
 
-    fn get_allowed_siblings(&self, dir: &str) -> Option<Vec<&str>> {
-        let siblings = self.allow.get(dir)?;
+    fn get_allowed_siblings(&self, dirname: &str) -> Option<Vec<&str>> {
+        let siblings = self.allow.get(dirname)?;
         Some(siblings.iter().map(|s| s.as_str()).collect())
     }
 }
@@ -58,10 +59,8 @@ pub fn get_dir_rules(dir_path: &Path) -> Option<Rules> {
 }
 
 pub fn read_rules_file(path: &Path) -> Result<Rules, Box<dyn Error>> {
-    let mut file = File::open(path)?;
-    let mut yaml_content = String::new();
-    file.read_to_string(&mut yaml_content)?;
-    let rules: Rules = serde_yaml::from_str(&yaml_content)?;
+    let file = File::open(path)?;
+    let rules: Rules = serde_yaml::from_reader(file)?;
     Ok(rules)
 }
 

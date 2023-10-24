@@ -29,7 +29,7 @@ pub fn list_violations(
     let mut violations = Vec::new();
     visit::visit_path(
         &mut violations,
-        root.as_ref(),
+        root,
         &disallowed_imports,
         target,
         abort_on_violation,

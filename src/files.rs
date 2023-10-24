@@ -1,10 +1,11 @@
 use std::fs;
 use std::io;
 use std::path::Path;
+use std::path::PathBuf;
 
 pub struct FilesAndDirectories {
-    pub files: Vec<String>,
-    pub directories: Vec<String>,
+    pub files: Vec<PathBuf>,
+    pub directories: Vec<PathBuf>,
 }
 
 pub fn list_files_and_directories(
@@ -14,17 +15,12 @@ pub fn list_files_and_directories(
     let mut directories = Vec::new();
 
     for entry in fs::read_dir(directory_path)? {
-        let entry = entry?;
-        let path = entry.path();
+        let path = entry?.path();
 
-        if let Some(file_name) = path.file_name() {
-            if let Some(name_str) = file_name.to_str() {
-                if path.is_file() {
-                    files.push(name_str.to_string());
-                } else if path.is_dir() {
-                    directories.push(name_str.to_string());
-                }
-            }
+        if path.is_file() {
+            files.push(path);
+        } else if path.is_dir() {
+            directories.push(path);
         }
     }
 
