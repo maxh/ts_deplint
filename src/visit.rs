@@ -1,54 +1,52 @@
 use crate::{disallowed, files, rules, ts_reader, violations::Violation};
-use std::{error::Error, path::Path};
+use std::{
+    error::Error,
+    path::{Path, PathBuf},
+};
 
 pub fn visit_path(
+    violations: &mut Vec<Violation>,
     root: &Path,
     disallowed_imports: &Vec<String>,
     current: &Path,
     abort_on_violation: bool,
-) -> Result<Vec<Violation>, Box<dyn Error>> {
-    let map = files::list_files_and_directories(current)?;
+) -> Result<(), Box<dyn Error>> {
+    let files_and_directories = files::list_files_and_directories(current)?;
 
-    let mut violations = Vec::new();
-
-    let files = map.get("files").unwrap();
-    violations.extend(check_files_for_disallowed_imports(
+    check_files_for_disallowed_imports(
+        violations,
         root,
         disallowed_imports,
-        &current,
-        &files,
+        &files_and_directories.files,
         abort_on_violation,
-    )?);
+    )?;
     if abort_on_violation && violations.len() > 0 {
-        return Ok(violations);
+        return Ok(());
     }
 
-    let directories = map.get("directories").unwrap();
-    violations.extend(visit_directories(
+    visit_directories(
+        violations,
         root,
         disallowed_imports,
         &current,
-        &directories,
+        &files_and_directories.directories,
         abort_on_violation,
-    )?);
+    )?;
 
-    Ok(violations)
+    Ok(())
 }
 
 fn check_files_for_disallowed_imports(
+    violations: &mut Vec<Violation>,
     root: &Path,
     disallowed_imports: &Vec<String>,
-    current: &Path,
-    files: &Vec<String>,
+    files: &[PathBuf],
     abort_on_violation: bool,
-) -> Result<Vec<Violation>, Box<dyn Error>> {
-    let mut violations = Vec::new();
-
-    for file in files {
-        if !file.ends_with(".ts") {
+) -> Result<(), Box<dyn Error>> {
+    for full_path in files {
+        if !full_path.ends_with(".ts") {
             continue;
         }
-        let full_path = current.join(file);
         let relative_path = full_path.strip_prefix(root)?;
         let imports = ts_reader::read_ts_imports(&full_path)?;
         for import in imports {
@@ -60,45 +58,44 @@ fn check_files_for_disallowed_imports(
                     };
                     violations.push(violation);
                     if abort_on_violation {
-                        return Ok(violations);
+                        return Ok(());
                     }
                 }
             }
         }
     }
 
-    Ok(violations)
+    Ok(())
 }
 
 fn visit_directories(
+    violations: &mut Vec<Violation>,
     root: &Path,
     disallowed_imports: &Vec<String>,
     current: &Path,
-    directories: &Vec<String>,
+    directories: &[PathBuf],
     abort_on_violation: bool,
-) -> Result<Vec<Violation>, Box<dyn Error>> {
-    let mut violations = Vec::new();
-
+) -> Result<(), Box<dyn Error>> {
     let current_rules = rules::get_dir_rules(current);
     for child in directories {
         let dir_disallowed_imports = disallowed::get_child_disallowed_imports(
             root,
-            current,
             disallowed_imports,
             &current_rules,
             child,
         );
         let next = current.join(child);
-        violations.extend(visit_path(
+        visit_path(
+            violations,
             root,
             &dir_disallowed_imports,
             &next,
             abort_on_violation,
-        )?);
+        )?;
         if abort_on_violation && violations.len() > 0 {
-            return Ok(violations);
+            return Ok(());
         }
     }
 
-    Ok(violations)
+    Ok(())
 }

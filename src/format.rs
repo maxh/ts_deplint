@@ -1,24 +1,34 @@
+use std::fs;
 use std::path::Path;
 
-use crate::{files, rules, RULES_FILE_NAME};
+use crate::{rules, RULES_FILE_NAME};
 
 pub fn format_rules_file(target: &Path) -> Result<(), Box<dyn std::error::Error>> {
     let r = rules::read_rules_file(target)?;
-    rules::write_formatted_rules_file(target, &r)?;
+    rules::write_formatted_rules_file(target, r)?;
     Ok(())
 }
 
 pub fn format_rules_files_recursively(target: &Path) -> Result<(), Box<dyn std::error::Error>> {
     let p = target.join(RULES_FILE_NAME);
-    let r = rules::read_rules_file(&p);
-    if r.is_ok() {
-        rules::write_formatted_rules_file(&p, &r.unwrap())?;
+    if let Ok(rules) = rules::read_rules_file(&p) {
+        rules::write_formatted_rules_file(&p, rules)?;
     }
+
     // Recurse into directories.
-    let map = files::list_files_and_directories(target)?;
-    let directories = map.get("directories").unwrap();
+    let directories = fs::read_dir(&target)?.filter_map(|r| {
+        if let Ok(entry) = r {
+            if entry.path().is_file() {
+                return Some(entry.path());
+            }
+        }
+
+        None
+    });
+
     for directory in directories {
-        format_rules_files_recursively(&target.join(directory))?;
+        format_rules_files_recursively(&directory)?;
     }
+
     Ok(())
 }
