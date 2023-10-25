@@ -27,7 +27,7 @@ fn update_diagrams_recursively(dir: &Path) -> Result<(), Box<dyn Error>> {
 }
 
 #[derive(Parser)]
-#[clap(name = "ts_depslint")]
+#[clap(name = "ts_deplint")]
 /// ts_deplint is a tool for linting TypeScript projects for disallowed imports.
 struct Opt {
     #[clap(subcommand)]
