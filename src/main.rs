@@ -28,7 +28,6 @@ enum Commands {
 #[clap(rename_all = "camel_case")]
 /// Lint the passed-in paths for disallowed imports.
 struct LintCommand {
-    #[arg(last = true)]
     /// Paths can be either directories or files.
     paths: Vec<String>,
 }
@@ -37,7 +36,6 @@ struct LintCommand {
 #[clap(rename_all = "camel_case")]
 /// Update the README.md file in the passed-in paths with a diagram of the disallowed imports.
 struct DiagramCommand {
-    #[arg(last = true)]
     /// Paths can be either directories or files.
     paths: Vec<String>,
 }
@@ -46,7 +44,6 @@ struct DiagramCommand {
 #[clap(rename_all = "camel_case")]
 /// Fix the disallowed imports in the passed-in paths by adding allow rules.
 struct FixCommand {
-    #[arg(last = true)]
     /// Paths can be either directories or files.
     paths: Vec<String>,
 }
@@ -55,7 +52,6 @@ struct FixCommand {
 #[clap(rename_all = "camel_case")]
 /// Format the rules files in the passed-in paths.
 struct FormatCommand {
-    #[arg(last = true)]
     /// Paths can be either directories or files.
     paths: Vec<String>,
 }
