@@ -4,7 +4,7 @@ A tool to lint dependencies within TypeScript projects.
 
 ## Usage
 
-    ts_deplint <command> -- <path1> <path2>
+    ts_deplint <command> <path1> <path2>
 
 ## Commands
 
