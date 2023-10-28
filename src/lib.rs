@@ -11,7 +11,8 @@ mod ts_reader;
 mod violations;
 mod visit;
 
-pub use diagram::update_readme_with_diagram;
+pub use diagram::update_readme_diagram;
+pub use diagram::update_readme_diagrams_recursively;
 pub use fix::fix_violation;
 pub use format::format_rules_file;
 pub use format::format_rules_files_recursively;
