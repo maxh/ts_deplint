@@ -7,10 +7,10 @@ mod fix;
 mod format;
 mod root;
 mod rules;
-mod ts_reader;
 mod violations;
 mod visit;
 
+pub mod ts_reader;
 pub use diagram::update_readme_diagram;
 pub use diagram::update_readme_diagrams_recursively;
 pub use fix::fix_violation;
