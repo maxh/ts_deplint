@@ -1,8 +1,10 @@
-use std::path::Path;
+use std::{env::current_exe, path::Path};
 
 use crate::rules::{self, Rules};
 
 pub fn get_initial_disallowed_imports(root: &Path, target: &Path) -> Vec<String> {
+    println!("get_initial_disallowed_imports");
+    println!("{:?}", target);
     return get_initial_disallowed_imports_impl(root, target, vec![], &root);
 }
 
@@ -13,7 +15,11 @@ pub fn get_child_disallowed_imports(
     directory: &Path,
 ) -> Vec<String> {
     let mut dir_disallowed_imports = disallowed_imports.clone();
+    println!("get_child_disallowed_imports");
+    println!("{:?}", directory);
     if let Some(current) = directory.parent() {
+        println!("parent");
+        println!("{:?}", current);
         if let Some(file_name) = directory.file_name().and_then(|os_str| os_str.to_str()) {
             if let Some(rules) = rules {
                 if let Some(disallowed_siblings) = rules.get_disallowed_siblings(file_name) {

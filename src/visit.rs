@@ -44,10 +44,14 @@ fn check_files_for_disallowed_imports(
     abort_on_violation: bool,
 ) -> Result<(), Box<dyn Error>> {
     for full_path in files {
-        if !full_path.ends_with(".ts") {
+        if full_path.extension().unwrap() != "ts" {
             continue;
         }
-        let relative_path = full_path.strip_prefix(root)?;
+        let relative_path_result = full_path.strip_prefix(root);
+        if relative_path_result.is_err() {
+            println!("Failed to strip {:?} from {:?}", root, full_path);
+        }
+        let relative_path = relative_path_result.unwrap();
         let imports = ts_reader::read_ts_imports(&full_path)?;
         for import in imports {
             for disallowed_import in disallowed_imports {
