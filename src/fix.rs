@@ -37,5 +37,5 @@ pub fn fix_violation(root: &Path, violation: &Violation) -> Result<(), Box<dyn s
     disallowed_imports.sort();
     disallowed_imports.dedup();
     rules.allow = allow;
-    return write_formatted_rules_file(&rules_path, rules);
+    return write_formatted_rules_file(&rules_path, &rules);
 }
