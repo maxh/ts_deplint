@@ -1,4 +1,4 @@
-use std::{env::current_exe, path::Path};
+use std::path::Path;
 
 use crate::rules::{self, Rules};
 
