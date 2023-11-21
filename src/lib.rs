@@ -7,12 +7,11 @@ mod fix;
 mod format;
 mod root;
 mod rules;
+mod ts_reader;
 mod violations;
 mod visit;
 
-pub mod ts_reader;
-pub use diagram::update_readme_diagram;
-pub use diagram::update_readme_diagrams_recursively;
+pub use diagram::update_readme_with_diagram;
 pub use fix::fix_violation;
 pub use format::format_rules_file;
 pub use format::format_rules_files_recursively;
@@ -27,10 +26,8 @@ pub fn list_violations(
     abort_on_violation: bool,
 ) -> Result<Vec<violations::Violation>, Box<dyn Error>> {
     let disallowed_imports = disallowed::get_initial_disallowed_imports(&root, target);
-    let mut violations = Vec::new();
-    visit::visit_path(
-        &mut violations,
-        root,
+    let violations = visit::visit_path(
+        root.as_ref(),
         &disallowed_imports,
         target,
         abort_on_violation,
