@@ -7,7 +7,7 @@ mod fix;
 mod format;
 mod root;
 mod rules;
-mod ts_reader;
+pub mod ts_reader;
 mod violations;
 mod visit;
 
