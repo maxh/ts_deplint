@@ -26,7 +26,9 @@ pub fn list_violations(
     abort_on_violation: bool,
 ) -> Result<Vec<violations::Violation>, Box<dyn Error>> {
     let disallowed_imports = disallowed::get_initial_disallowed_imports(&root, target);
-    let violations = visit::visit_path(
+    let mut violations = Vec::new();
+    visit::visit_path(
+        &mut violations,
         root.as_ref(),
         &disallowed_imports,
         target,
