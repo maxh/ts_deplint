@@ -11,11 +11,13 @@ pub fn get_child_disallowed_imports(
     current: &Path,
     disallowed_imports: &Vec<String>,
     rules: &Option<Rules>,
-    directory: &str,
+    directory: &Path,
 ) -> Vec<String> {
     let mut dir_disallowed_imports = disallowed_imports.clone();
     if let Some(rules) = rules {
-        if let Some(disallowed_siblings) = rules.get_disallowed_siblings(&directory) {
+        if let Some(disallowed_siblings) =
+            rules.get_disallowed_siblings(directory.file_name().unwrap().to_str().unwrap())
+        {
             let new_disallowed_imports = disallowed_siblings
                 .iter()
                 .map(|s| current.join(s))
@@ -51,7 +53,7 @@ fn get_initial_disallowed_imports_impl(
         current,
         &disallowed_imports,
         &rules::get_dir_rules(current),
-        &next_dir_name,
+        Path::new(&next_dir_name),
     );
     return get_initial_disallowed_imports_impl(
         root,

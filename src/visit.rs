@@ -1,5 +1,8 @@
 use crate::{disallowed, files, rules, ts_reader, violations::Violation};
-use std::{error::Error, path::Path};
+use std::{
+    error::Error,
+    path::{Path, PathBuf},
+};
 
 pub fn visit_path(
     root: &Path,
@@ -7,28 +10,26 @@ pub fn visit_path(
     current: &Path,
     abort_on_violation: bool,
 ) -> Result<Vec<Violation>, Box<dyn Error>> {
-    let map = files::list_files_and_directories(current)?;
+    let files_and_directories = files::list_files_and_directories(current)?;
 
     let mut violations = Vec::new();
 
-    let files = map.get("files").unwrap();
     violations.extend(check_files_for_disallowed_imports(
         root,
         disallowed_imports,
         &current,
-        &files,
+        &files_and_directories.files,
         abort_on_violation,
     )?);
     if abort_on_violation && violations.len() > 0 {
         return Ok(violations);
     }
 
-    let directories = map.get("directories").unwrap();
     violations.extend(visit_directories(
         root,
         disallowed_imports,
         &current,
-        &directories,
+        &files_and_directories.directories,
         abort_on_violation,
     )?);
 
@@ -39,7 +40,7 @@ fn check_files_for_disallowed_imports(
     root: &Path,
     disallowed_imports: &Vec<String>,
     current: &Path,
-    files: &Vec<String>,
+    files: &Vec<PathBuf>,
     abort_on_violation: bool,
 ) -> Result<Vec<Violation>, Box<dyn Error>> {
     let mut violations = Vec::new();
@@ -74,7 +75,7 @@ fn visit_directories(
     root: &Path,
     disallowed_imports: &Vec<String>,
     current: &Path,
-    directories: &Vec<String>,
+    directories: &Vec<PathBuf>,
     abort_on_violation: bool,
 ) -> Result<Vec<Violation>, Box<dyn Error>> {
     let mut violations = Vec::new();
