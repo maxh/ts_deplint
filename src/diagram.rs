@@ -7,6 +7,28 @@ use std::io::{self, Write};
 use std::path::Path;
 
 use crate::rules::read_rules_file;
+use crate::RULES_FILE_NAME;
+
+/// Recursively find directories containing a rules file and update the diagram.
+pub fn update_diagrams_recursively(dir: &Path) -> Result<(), Box<dyn Error>> {
+    if dir.join(RULES_FILE_NAME).exists() {
+        let readme_path = dir.join("README.md");
+        update_readme_with_diagram(&dir.join(RULES_FILE_NAME), &readme_path)?;
+    }
+    for entry in fs::read_dir(dir)? {
+        let entry = entry?;
+        let path = entry.path();
+        if path.is_dir() {
+            if path.join(RULES_FILE_NAME).exists() {
+                let readme_path = path.join("README.md");
+                update_readme_with_diagram(&path.join(RULES_FILE_NAME), &readme_path)?;
+            } else {
+                update_diagrams_recursively(&path)?;
+            }
+        }
+    }
+    Ok(())
+}
 
 fn get_allows(yaml_path: &Path) -> Result<BTreeMap<String, Vec<String>>, Box<dyn Error>> {
     let yaml_rules = read_rules_file(yaml_path)?;
