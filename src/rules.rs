@@ -4,7 +4,7 @@ use std::path::Path;
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
 use std::error::Error;
-use std::io::{Read, Write};
+use std::io::Write;
 
 pub const RULES_FILE_NAME: &str = ".deplint.rules.yml";
 
@@ -57,10 +57,8 @@ pub fn get_dir_rules(dir_path: &Path) -> Option<Rules> {
 }
 
 pub fn read_rules_file(path: &Path) -> Result<Rules, Box<dyn Error>> {
-    let mut file = File::open(path)?;
-    let mut yaml_content = String::new();
-    file.read_to_string(&mut yaml_content)?;
-    let rules: Rules = serde_yaml::from_str(&yaml_content)?;
+    let file = File::open(path)?;
+    let rules: Rules = serde_yaml::from_reader(file)?;
     Ok(rules)
 }
 
