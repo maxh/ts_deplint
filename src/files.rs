@@ -1,12 +1,25 @@
-use std::collections::HashMap;
 use std::fs;
 use std::io;
 use std::path::Path;
 
-pub fn list_files_and_directories(
-    directory_path: &Path,
-) -> io::Result<HashMap<String, Vec<String>>> {
-    let mut result = HashMap::new();
+/// A struct that contains a list of files and directories in a directory.
+/// It does not contain the full path, only the file or directory name.
+///
+/// For example, if we have a directory with the following contents:
+/// - /home/user/file1.txt
+/// - /home/user/file2.txt
+/// - /home/user/dir1
+///
+/// Then the FilesAndDirectories struct will contain:
+/// - files: ["file1.txt", "file2.txt"]
+/// - directories: ["dir1"]
+///
+pub struct FilesAndDirectories {
+    pub files: Vec<String>,
+    pub directories: Vec<String>,
+}
+
+pub fn list_files_and_directories(directory_path: &Path) -> io::Result<FilesAndDirectories> {
     let mut files = Vec::new();
     let mut directories = Vec::new();
 
@@ -25,8 +38,5 @@ pub fn list_files_and_directories(
         }
     }
 
-    result.insert("files".to_string(), files);
-    result.insert("directories".to_string(), directories);
-
-    Ok(result)
+    Ok(FilesAndDirectories { files, directories })
 }
