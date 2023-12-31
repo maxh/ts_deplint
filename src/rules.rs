@@ -64,15 +64,11 @@ pub fn read_rules_file(path: &Path) -> Result<Rules, Box<dyn Error>> {
     Ok(rules)
 }
 
-pub fn write_formatted_rules_file(path: &Path, rules: &Rules) -> Result<(), Box<dyn Error>> {
+pub fn write_formatted_rules_file(path: &Path, rules: Rules) -> Result<(), Box<dyn Error>> {
     let mut f = File::create(path)?;
     // Sort the keys within the allow map.
-    let mut allow = rules.allow.clone();
-    let mut keys = allow.keys().cloned().collect::<Vec<_>>();
-    keys.sort();
     let mut new_allow = BTreeMap::new();
-    for key in keys {
-        let mut values = allow.remove(&key).unwrap();
+    for (key, mut values) in rules.allow.into_iter() {
         values.sort();
         new_allow.insert(key, values);
     }
