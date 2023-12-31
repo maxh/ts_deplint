@@ -1,34 +1,12 @@
 use clap::{Parser, Subcommand};
 use std::collections::HashSet;
 use std::error::Error;
-use std::fs;
 use std::path::Path;
 
 use ts_deplint::{
     find_package_json_directory, list_violations, pretty_print_violations,
-    update_readme_with_diagram, Violation, RULES_FILE_NAME,
+    update_diagrams_recursively, update_readme_with_diagram, Violation, RULES_FILE_NAME,
 };
-
-/// Recursively find directories containing a rules file and update the diagram.
-fn update_diagrams_recursively(dir: &Path) -> Result<(), Box<dyn Error>> {
-    if dir.join(RULES_FILE_NAME).exists() {
-        let readme_path = dir.join("README.md");
-        update_readme_with_diagram(&dir.join(RULES_FILE_NAME), &readme_path)?;
-    }
-    for entry in fs::read_dir(dir)? {
-        let entry = entry?;
-        let path = entry.path();
-        if path.is_dir() {
-            if path.join(RULES_FILE_NAME).exists() {
-                let readme_path = path.join("README.md");
-                update_readme_with_diagram(&path.join(RULES_FILE_NAME), &readme_path)?;
-            } else {
-                update_diagrams_recursively(&path)?;
-            }
-        }
-    }
-    Ok(())
-}
 
 #[derive(Parser)]
 #[clap(name = "ts_depslint")]
