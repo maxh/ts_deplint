@@ -15,9 +15,8 @@ pub fn format_rules_files_recursively(target: &Path) -> Result<(), Box<dyn std::
         rules::write_formatted_rules_file(&p, &r.unwrap())?;
     }
     // Recurse into directories.
-    let map = files::list_files_and_directories(target)?;
-    let directories = map.get("directories").unwrap();
-    for directory in directories {
+    let files_and_directories = files::list_files_and_directories(target)?;
+    for directory in &files_and_directories.directories {
         format_rules_files_recursively(&target.join(directory))?;
     }
     Ok(())
