@@ -48,6 +48,8 @@ pub fn update_readme_with_diagram(
 ) -> Result<(), Box<dyn Error>> {
     let allows = get_allows(yaml_path)?;
 
+    println!("Found {} allows in the YAML file.", allows.len());
+
     if allows.is_empty() {
         println!("No allows found in the YAML file.");
         return Ok(());
@@ -78,6 +80,9 @@ pub fn update_readme_with_diagram(
     output_lines.extend(after_dep_diagram_block);
 
     let output_content = output_lines.join("\n");
+
+    println!("Writing to {}", readme_path.display());
+    println!("{}", output_content);
 
     let mut file = fs::File::create(readme_path)?;
     file.write_all(output_content.as_bytes())?;

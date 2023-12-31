@@ -11,11 +11,17 @@ use ts_deplint::{
 
 /// Recursively find directories containing a rules file and update the diagram.
 fn update_diagrams_recursively(dir: &Path) -> Result<(), Box<dyn Error>> {
+    if dir.join(RULES_FILE_NAME).exists() {
+        println!("Updating diagrams in {}", dir.display());
+        let readme_path = dir.join("README.md");
+        update_readme_with_diagram(&dir.join(RULES_FILE_NAME), &readme_path)?;
+    }
     for entry in fs::read_dir(dir)? {
         let entry = entry?;
         let path = entry.path();
         if path.is_dir() {
             if path.join(RULES_FILE_NAME).exists() {
+                println!("Updating diagrams in {}", dir.display());
                 let readme_path = path.join("README.md");
                 update_readme_with_diagram(&path.join(RULES_FILE_NAME), &readme_path)?;
             } else {
