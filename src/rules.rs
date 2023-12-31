@@ -70,7 +70,7 @@ pub fn write_formatted_rules_file(path: &Path, rules: Rules) -> Result<(), Box<d
     let mut new_allow = BTreeMap::new();
     for (key, mut values) in rules.allow.into_iter() {
         values.sort();
-        new_allow.insert(key.clone(), values);
+        new_allow.insert(key, values);
     }
     let new_rules = Rules::new_with_allow(new_allow);
     let yaml_content = serde_yaml::to_string(&new_rules)?;
