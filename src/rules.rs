@@ -21,14 +21,11 @@ impl Rules {
 
     /// Returns a vector of sibling directory names that code in the
     /// passed-in directory is disallowed to import.
-    pub fn get_disallowed_siblings(&self, dirname: &str) -> Option<Vec<String>> {
+    pub fn get_disallowed_siblings(&self, dir: &str) -> Option<Vec<String>> {
         let unique_dirs = self.extract_unique_dirs();
-        let allowed_dirs = self.get_allowed_siblings(dirname)?;
+        let allowed_dirs = self.get_allowed_siblings(dir)?;
         let diff = find_difference(unique_dirs, allowed_dirs.clone());
-        let diff = diff
-            .into_iter()
-            .filter(|x| x != dirname)
-            .collect::<Vec<_>>();
+        let diff = diff.into_iter().filter(|x| x != dir).collect::<Vec<_>>();
         Some(diff)
     }
 
