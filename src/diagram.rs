@@ -93,6 +93,14 @@ pub fn update_readme_with_diagram(
     output_lines.push("```".to_string());
     output_lines.extend(after_dep_diagram_block);
 
+    // Add a newline to the end of the file if it doesn't already have one.
+    if !output_lines.is_empty() {
+        let last_line = output_lines.last().unwrap();
+        if !last_line.is_empty() {
+            output_lines.push("".to_string());
+        }
+    }
+
     let output_content = output_lines.join("\n");
 
     let mut file = fs::File::create(readme_path)?;
