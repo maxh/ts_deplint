@@ -19,12 +19,7 @@ pub fn update_diagrams_recursively(dir: &Path) -> Result<(), Box<dyn Error>> {
         let entry = entry?;
         let path = entry.path();
         if path.is_dir() {
-            if path.join(RULES_FILE_NAME).exists() {
-                let readme_path = path.join("README.md");
-                update_readme_with_diagram(&path.join(RULES_FILE_NAME), &readme_path)?;
-            } else {
-                update_diagrams_recursively(&path)?;
-            }
+            update_diagrams_recursively(&path)?;
         }
     }
     Ok(())
@@ -71,7 +66,6 @@ pub fn update_readme_with_diagram(
     let allows = get_allows(yaml_path)?;
 
     if allows.is_empty() {
-        println!("No allows found in the YAML file.");
         return Ok(());
     }
 
