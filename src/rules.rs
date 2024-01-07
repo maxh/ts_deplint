@@ -21,19 +21,23 @@ impl Rules {
 
     /// Returns a vector of sibling directory names that code in the
     /// passed-in directory is disallowed to import.
-    pub fn get_disallowed_siblings(&self, dir: &str) -> Option<Vec<String>> {
+    pub fn get_disallowed_siblings(&self, dirname: &str) -> Option<Vec<&str>> {
         let unique_dirs = self.extract_unique_dirs();
-        let allowed_dirs = self.get_allowed_siblings(dir)?;
-        let diff = find_difference(unique_dirs, allowed_dirs.clone());
-        let diff = diff.into_iter().filter(|x| x != dir).collect::<Vec<_>>();
+        let allowed_dirs = self.get_allowed_siblings(dirname).unwrap_or(vec![]);
+        let diff = find_difference(&unique_dirs, &allowed_dirs);
+        let diff = diff
+            .into_iter()
+            .filter(|x| *x != dirname)
+            .collect::<Vec<_>>();
         Some(diff)
     }
 
-    fn extract_unique_dirs(&self) -> Vec<String> {
-        let mut unique_names = self.allow.keys().cloned().collect::<Vec<_>>();
-        for names in self.allow.values() {
+    fn extract_unique_dirs(&self) -> Vec<&str> {
+        let mut unique_names = Vec::with_capacity(self.allow.len());
+        for (key, names) in self.allow.iter() {
+            unique_names.push(key.as_str());
             for name in names {
-                unique_names.push(name.clone());
+                unique_names.push(name.as_str());
             }
         }
         unique_names.sort();
@@ -41,13 +45,17 @@ impl Rules {
         unique_names
     }
 
-    fn get_allowed_siblings(&self, dir: &str) -> Option<&Vec<String>> {
-        self.allow.get(dir)
+    fn get_allowed_siblings(&self, dirname: &str) -> Option<Vec<&str>> {
+        let siblings = self.allow.get(dirname)?;
+        Some(siblings.iter().map(|s| s.as_str()).collect())
     }
 }
 
-fn find_difference(a: Vec<String>, b: Vec<String>) -> Vec<String> {
-    a.into_iter().filter(|x| !b.contains(x)).collect()
+fn find_difference<'a>(a: &[&'a str], b: &[&'a str]) -> Vec<&'a str> {
+    a.iter()
+        .filter(|x| !b.contains(x))
+        .map(|s| *s)
+        .collect::<Vec<&str>>()
 }
 
 pub fn get_dir_rules(dir_path: &Path) -> Option<Rules> {
