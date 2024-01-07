@@ -6,30 +6,39 @@ on:
   workflow_dispatch:
 
 jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Run tests
+        run: cargo test --verbose
+
   release:
+    needs: test
     name: Release - ${{ matrix.platform.release_for }}
     strategy:
       matrix:
         platform:
-          - release_for: FreeBSD-x86_64
+          - release_for: Linux-x86_64
             os: ubuntu-20.04
-            target: x86_64-unknown-freebsd
-            bin: precious
-            name: precious-FreeBSD-x86_64.tar.gz
+            target: x86_64-unknown-linux-gnu
+            bin: ts_deplint
+            name: ts_deplint-FreeBSD-x86_64.tar.gz
             command: build
 
           - release_for: Windows-x86_64
             os: windows-latest
             target: x86_64-pc-windows-msvc
-            bin: precious.exe
-            name: precious-Windows-x86_64.zip
+            bin: ts_deplint.exe
+            name: ts_deplint-Windows-x86_64.zip
             command: both
 
           - release_for: macOS-x86_64
             os: macOS-latest
             target: x86_64-apple-darwin
-            bin: precious
-            name: precious-Darwin-x86_64.tar.gz
+            bin: ts_deplint
+            name: ts_deplint-Darwin-x86_64.tar.gz
             command: both
 
     runs-on: ${{ matrix.platform.os }}
