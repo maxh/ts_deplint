@@ -1,4 +1,5 @@
 name: Tests and release
+# https://github.com/houseabsolute/precious/blob/master/.github/workflows/ci.yml
 
 on:
   push:
@@ -21,85 +22,6 @@ jobs:
       fail-fast: false
       matrix:
         platform:
-          - os_name: FreeBSD-x86_64
-            os: ubuntu-20.04
-            target: x86_64-unknown-freebsd
-            bin: ts_deplint
-            name: ts_deplint-FreeBSD-x86_64.tar.gz
-            skip_tests: true
-          - os_name: Linux-x86_64
-            os: ubuntu-20.04
-            target: x86_64-unknown-linux-musl
-            bin: ts_deplint
-            name: ts_deplint-Linux-x86_64-musl.tar.gz
-          - os_name: Linux-aarch64
-            os: ubuntu-20.04
-            target: aarch64-unknown-linux-musl
-            bin: ts_deplint
-            name: ts_deplint-Linux-aarch64-musl.tar.gz
-          - os_name: Linux-arm
-            os: ubuntu-20.04
-            target: arm-unknown-linux-musleabi
-            bin: ts_deplint
-            name: ts_deplint-Linux-arm-musl.tar.gz
-          - os_name: Linux-i686
-            os: ubuntu-20.04
-            target: i686-unknown-linux-musl
-            bin: ts_deplint
-            name: ts_deplint-Linux-i686-musl.tar.gz
-            skip_tests: true
-          - os_name: Linux-powerpc
-            os: ubuntu-20.04
-            target: powerpc-unknown-linux-gnu
-            bin: ts_deplint
-            name: ts_deplint-Linux-powerpc-gnu.tar.gz
-            skip_tests: true
-          - os_name: Linux-powerpc64
-            os: ubuntu-20.04
-            target: powerpc64-unknown-linux-gnu
-            bin: ts_deplint
-            name: ts_deplint-Linux-powerpc64-gnu.tar.gz
-            skip_tests: true
-          - os_name: Linux-powerpc64le
-            os: ubuntu-20.04
-            target: powerpc64le-unknown-linux-gnu
-            bin: ts_deplint
-            name: ts_deplint-Linux-powerpc64le.tar.gz
-            skip_tests: true
-          - os_name: Linux-riscv64
-            os: ubuntu-20.04
-            target: riscv64gc-unknown-linux-gnu
-            bin: ts_deplint
-            name: ts_deplint-Linux-riscv64gc-gnu.tar.gz
-          - os_name: Linux-s390x
-            os: ubuntu-20.04
-            target: s390x-unknown-linux-gnu
-            bin: ts_deplint
-            name: ts_deplint-Linux-s390x-gnu.tar.gz
-            skip_tests: true
-          - os_name: NetBSD-x86_64
-            os: ubuntu-20.04
-            target: x86_64-unknown-netbsd
-            bin: ts_deplint
-            name: ts_deplint-NetBSD-x86_64.tar.gz
-            skip_tests: true
-          - os_name: Windows-aarch64
-            os: windows-latest
-            target: aarch64-pc-windows-msvc
-            bin: ts_deplint.exe
-            name: ts_deplint-Windows-aarch64.zip
-            skip_tests: true
-          - os_name: Windows-i686
-            os: windows-latest
-            target: i686-pc-windows-msvc
-            bin: ts_deplint.exe
-            name: ts_deplint-Windows-i686.zip
-            skip_tests: true
-          - os_name: Windows-x86_64
-            os: windows-latest
-            target: x86_64-pc-windows-msvc
-            bin: ts_deplint.exe
-            name: ts_deplint-Windows-x86_64.zip
           - os_name: macOS-x86_64
             os: macOS-latest
             target: x86_64-apple-darwin
@@ -110,11 +32,8 @@ jobs:
             target: aarch64-apple-darwin
             bin: ts_deplint
             name: ts_deplint-Darwin-aarch64.tar.gz
-            skip_tests: true
         toolchain:
           - stable
-          - beta
-          - nightly
     steps:
       - uses: actions/checkout@v3
       - name: Cache cargo & target directories
