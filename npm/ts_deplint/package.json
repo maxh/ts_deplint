@@ -1,6 +1,6 @@
 {
-  "name": "tsdeplint",
-  "version": "0.1.0",
+  "name": "ts_deplint",
+  "version": "0.0.1",
   "bin": "lib/index.js",
   "scripts": {
     "typecheck": "tsc --noEmit",
@@ -15,19 +15,15 @@
   },
   "author": "Max Heinritz",
   "devDependencies": {
-    "@types/node": "^18.11.18",
-    "@typescript-eslint/eslint-plugin": "^5.48.0",
-    "@typescript-eslint/parser": "^5.48.0",
-    "eslint": "^8.31.0",
-    "typescript": "^4.9.4"
+    "@types/node": "^18.11.18"
   },
   "optionalDependencies": {
-    "app-linux-x64": "0.1.0",
-    "app-linux-arm64": "0.1.0",
-    "app-darwin-x64": "0.1.0",
-    "app-darwin-arm64": "0.1.0",
-    "app-windows-x64": "0.1.0",
-    "app-windows-arm64": "0.1.0"
+    "ts_deplint-linux-x64": "0.0.1",
+    "ts_deplint-linux-arm64": "0.0.1",
+    "ts_deplint-darwin-x64": "0.0.1",
+    "ts_deplint-darwin-arm64": "0.0.1",
+    "ts_deplint-windows-x64": "0.0.1",
+    "ts_deplint-windows-arm64": "0.0.1"
   },
   "eslintConfig": {
     "extends": [
