@@ -32,6 +32,7 @@ jobs:
             target: aarch64-apple-darwin
             bin: ts_deplint
             name: ts_deplint-Darwin-aarch64.tar.gz
+            skip_tests: true
         toolchain:
           - stable
     steps:
