@@ -20,7 +20,16 @@ pub fn get_child_disallowed_imports(
                 .iter()
                 .map(|s| current.join(s))
                 .filter_map(|p| p.strip_prefix(root).ok().map(|p| p.to_path_buf()))
-                .map(|p| p.to_str().expect("").to_string())
+                .map(|p| {
+                    let mut r = p.to_str().expect("").to_string();
+                    // Include trailing slash. Say:
+                    // src/foo/ is disallowed
+                    // src/foo-bar/ is allowed
+                    // Without the trailing slash, we'd incorrectly
+                    // disallow foo-bar since it would match src/foo.
+                    r.push('/');
+                    return r;
+                })
                 .collect::<Vec<_>>();
             dir_disallowed_imports.extend(new_disallowed_imports);
         }
