@@ -10,7 +10,7 @@
 
 ## v0.0.2
 
-- Add support for fixing. 
+- Add support for fixing.
 
 ## v0.0.1
 

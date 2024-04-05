@@ -1,13 +1,17 @@
 {
   "name": "@ts_deplint/cli",
   "version": "0.0.5",
-  "bin": "lib/index.js",
+  "bin": "dist/index.js",
+  "files": [
+    "dist/**/*",
+    "!dist/**/*.test.js"
+  ],
   "scripts": {
     "typecheck": "tsc --noEmit",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "build": "tsc",
-    "dev": "yarn build && node lib/index.js"
+    "dev": "yarn build && node dist/index.js"
   },
   "license": "MIT",
   "repository": {
@@ -16,13 +20,14 @@
   },
   "author": "Max Heinritz",
   "devDependencies": {
-    "@types/node": "^18.11.18"
+    "@types/node": "^18.11.18",
+    "typescript": "^5.4.3"
   },
   "optionalDependencies": {
-    "@ts_deplint/cli-linux-x64": "0.0.5",
-    "@ts_deplint/cli-linux-arm64": "0.0.5",
+    "@ts_deplint/cli-darwin-arm64": "0.0.5",
     "@ts_deplint/cli-darwin-x64": "0.0.5",
-    "@ts_deplint/cli-darwin-arm64": "0.0.5"
+    "@ts_deplint/cli-linux-arm64": "0.0.5",
+    "@ts_deplint/cli-linux-x64": "0.0.5"
   },
   "eslintConfig": {
     "extends": [
