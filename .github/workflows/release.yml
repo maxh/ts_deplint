@@ -1,105 +1,133 @@
-name: Tests and release
-# https://github.com/houseabsolute/precious/blob/master/.github/workflows/ci.yml
-
+name: Continuous Deployment
 
 on:
   push:
-    branches:
-      - "**"
-    tags-ignore:
-      - "ts_deplint-*"
-  pull_request:
+    tags:
+      - "v*.*.*"
   workflow_dispatch:
 
-env:
-  CRATE_NAME: ts_deplint
-  RUST_BACKTRACE: 1
-
 jobs:
-  test:
-    permissions:
-      contents: write
-    name: ${{ matrix.platform.os_name }} with rust ${{ matrix.toolchain }}
-    runs-on: ${{ matrix.platform.os }}
+  publish-npm-binaries:
+    name: Publish NPM packages
+    runs-on: ${{ matrix.build.os }}
     strategy:
       fail-fast: false
       matrix:
-        platform:
-          - os_name: macOS-x86_64
-            os: macOS-latest
-            target: x86_64-apple-darwin
-            bin: ts_deplint
-            name: ts_deplint-Darwin-x86_64.tar.gz
-          - os_name: macOS-aarch64
-            os: macOS-latest
-            target: aarch64-apple-darwin
-            bin: ts_deplint
-            name: ts_deplint-Darwin-aarch64.tar.gz
-            skip_tests: true
-        toolchain:
-          - stable
+        build:
+          - {
+              NAME: linux-x64-glibc,
+              OS: ubuntu-20.04,
+              TOOLCHAIN: stable,
+              TARGET: x86_64-unknown-linux-gnu,
+            }
+          - {
+              NAME: linux-arm64-glibc,
+              OS: ubuntu-20.04,
+              TOOLCHAIN: stable,
+              TARGET: aarch64-unknown-linux-gnu,
+            }
+          - {
+              NAME: darwin-x64,
+              OS: macos-11,
+              TOOLCHAIN: stable,
+              TARGET: x86_64-apple-darwin,
+            }
+          - {
+              NAME: darwin-arm64,
+              OS: macos-11,
+              TOOLCHAIN: stable,
+              TARGET: aarch64-apple-darwin,
+            }
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout
+        uses: actions/checkout@v3
 
-      - name: Cache cargo & target directories
-        uses: Swatinem/rust-cache@v2
+      - name: Determine new package version
+        id: version
+        run: |
+          git checkout HEAD -- Cargo.toml
+          curr="$(grep -oE 'version\s*=\s*"[^"]+"' Cargo.toml | cut -d '"' -f 2 | head -n 1)"
+          echo "new-version=$curr" >> "$GITHUB_OUTPUT"
 
-      - name: Install musl-tools on Linux
-        run: sudo apt-get update --yes && sudo apt-get install --yes musl-tools
-        if: contains(matrix.platform.name, 'musl')
-
-      - name: Build binary
-        uses: houseabsolute/actions-rust-cross@v0
+      - name: Install Rust toolchain
+        uses: actions-rs/toolchain@v1
         with:
-          command: "build"
-          target: ${{ matrix.platform.target }}
-          toolchain: ${{ matrix.toolchain }}
-          args: "--locked --release"
-          strip: true
+          toolchain: ${{ matrix.build.TOOLCHAIN }}
+          target: ${{ matrix.build.TARGET }}
+          override: true
 
-      - name: Run tests
-        uses: houseabsolute/actions-rust-cross@v0
+      - name: Build
+        uses: actions-rs/cargo@v1
         with:
-          command: "test"
-          target: ${{ matrix.platform.target }}
-          toolchain: ${{ matrix.toolchain }}
-          args: "--locked --release"
-        if: ${{ !matrix.platform.skip_tests }}
+          command: build
+          args: --release --locked --target ${{ matrix.build.TARGET }}
+          use-cross: ${{ matrix.build.OS == 'ubuntu-20.04' }} # use `cross` for Linux builds
 
-      - name: Package as archive
+      - name: Install node
+        uses: actions/setup-node@v3
+        with:
+          node-version: "16"
+          registry-url: "https://registry.npmjs.org"
+
+      - name: Publish to NPM
         shell: bash
         run: |
-          cd target/${{ matrix.platform.target }}/release
-          if [[ "${{ matrix.platform.os }}" == "windows-latest" ]]; then
-            7z a ../../../${{ matrix.platform.name }} ${{ matrix.platform.bin }}
+          cd npm
+          scope="@ts_deplint"
+          # derive the OS and architecture from the build matrix name
+          # note: when split by a hyphen, first part is the OS and the second is the architecture
+          node_os=$(echo "${{ matrix.build.NAME }}" | cut -d '-' -f1)
+          export node_os
+          node_arch=$(echo "${{ matrix.build.NAME }}" | cut -d '-' -f2)
+          export node_arch
+          # set the version
+          export npm_package_version="${{ env.RELEASE_VERSION }}"
+          # set the package name
+          # note: use 'windows' as OS name instead of 'win32'
+          if [ "${{ matrix.build.OS }}" = "windows-2022" ]; then
+            export npm_package_name="${scope}/cli-windows-${node_arch}"
           else
-            tar czvf ../../../${{ matrix.platform.name }} ${{ matrix.platform.bin }}
+            export npm_package_name="${scope}/cli-${node_os}-${node_arch}"
           fi
-          cd -
-        if: |
-          matrix.toolchain == 'stable' &&
-          ( startsWith( github.ref, 'refs/tags/v' ) ||
-            github.ref == 'refs/tags/test-release' )
+          # set the binary name
+          bin="ts_deplint"
+          # create the package directory
+          mkdir -p "${npm_package_name}/bin"
+          # generate package.json from the template
+          envsubst < package.json.tmpl > "${npm_package_name}/package.json"
+          # copy the binary into the package
+          # note: windows binaries has '.exe' extension
+          if [ "${{ matrix.build.OS }}" = "windows-2022" ]; then
+            bin="${bin}.exe"
+          fi
+          cp "../target/${{ matrix.build.TARGET }}/release/${bin}" "${npm_package_name}/bin"
+          # publish the package
+          cd "${npm_package_name}"
+          npm publish --access public --dry-run
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-      - name: Publish release artifacts
-        uses: actions/upload-artifact@v3
+  publish-npm-base:
+    name: Publish the base NPM package
+    needs: publish-npm-binaries
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Install node
+        uses: actions/setup-node@v3
         with:
-          name: ts_deplint-${{ matrix.platform.os_name }}
-          path: "ts_deplint-*"
-        if: matrix.toolchain == 'stable' && github.ref == 'refs/tags/test-release'
+          node-version: "16"
+          registry-url: "https://registry.npmjs.org"
 
-      - name: Generate SHA-256
-        run: shasum -a 256 ${{ matrix.platform.name }}
-        if: |
-          matrix.toolchain == 'stable' &&
-          matrix.platform.os == 'macOS-latest' &&
-          ( startsWith( github.ref, 'refs/tags/v' ) ||
-            github.ref == 'refs/tags/test-release' )
-
-      - name: Publish GitHub release
-        uses: softprops/action-gh-release@v1
-        with:
-          draft: true
-          files: "ts_deplint-*"
-          body_path: CHANGELOG.md
-        if: matrix.toolchain == 'stable' && startsWith( github.ref, 'refs/tags/v' )
+      - name: Publish the package
+        continue-on-error: true
+        shell: bash
+        run: |
+          cd npm/ts_deplint
+          yarn install # requires optional dependencies to be present in the registry
+          yarn build
+          npm publish --access public --dry-run
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
