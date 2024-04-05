@@ -5,30 +5,30 @@ __metadata:
   version: 8
   cacheKey: 10c0
 
-"@ts_deplint/cli-darwin-arm64@npm:0.0.5":
-  version: 0.0.5
-  resolution: "@ts_deplint/cli-darwin-arm64@npm:0.0.5"
+"@ts_deplint/cli-darwin-arm64@npm:0.0.6":
+  version: 0.0.6
+  resolution: "@ts_deplint/cli-darwin-arm64@npm:0.0.6"
   conditions: os=darwin & cpu=arm64
   languageName: node
   linkType: hard
 
-"@ts_deplint/cli-darwin-x64@npm:0.0.5":
-  version: 0.0.5
-  resolution: "@ts_deplint/cli-darwin-x64@npm:0.0.5"
+"@ts_deplint/cli-darwin-x64@npm:0.0.6":
+  version: 0.0.6
+  resolution: "@ts_deplint/cli-darwin-x64@npm:0.0.6"
   conditions: os=darwin & cpu=x64
   languageName: node
   linkType: hard
 
-"@ts_deplint/cli-linux-arm64@npm:0.0.5":
-  version: 0.0.5
-  resolution: "@ts_deplint/cli-linux-arm64@npm:0.0.5"
+"@ts_deplint/cli-linux-arm64@npm:0.0.6":
+  version: 0.0.6
+  resolution: "@ts_deplint/cli-linux-arm64@npm:0.0.6"
   conditions: os=linux & cpu=arm64
   languageName: node
   linkType: hard
 
-"@ts_deplint/cli-linux-x64@npm:0.0.5":
-  version: 0.0.5
-  resolution: "@ts_deplint/cli-linux-x64@npm:0.0.5"
+"@ts_deplint/cli-linux-x64@npm:0.0.6":
+  version: 0.0.6
+  resolution: "@ts_deplint/cli-linux-x64@npm:0.0.6"
   conditions: os=linux & cpu=x64
   languageName: node
   linkType: hard
@@ -37,10 +37,10 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@ts_deplint/cli@workspace:."
   dependencies:
-    "@ts_deplint/cli-darwin-arm64": "npm:0.0.5"
-    "@ts_deplint/cli-darwin-x64": "npm:0.0.5"
-    "@ts_deplint/cli-linux-arm64": "npm:0.0.5"
-    "@ts_deplint/cli-linux-x64": "npm:0.0.5"
+    "@ts_deplint/cli-darwin-arm64": "npm:0.0.6"
+    "@ts_deplint/cli-darwin-x64": "npm:0.0.6"
+    "@ts_deplint/cli-linux-arm64": "npm:0.0.6"
+    "@ts_deplint/cli-linux-x64": "npm:0.0.6"
     "@types/node": "npm:^18.11.18"
     typescript: "npm:^5.4.3"
   dependenciesMeta:
@@ -89,6 +89,6 @@ __metadata:
 "undici-types@npm:~5.26.4":
   version: 5.26.5
   resolution: "undici-types@npm:5.26.5"
-  checksum: 10c0/bb673d7876c2d411b6eb6c560e0c571eef4a01c1c19925175d16e3a30c4c428181fb8d7ae802a261f283e4166a0ac435e2f505743aa9e45d893f9a3df017b501
+  checksum: 10c0/bb673d7876c2d411b6eb6c560.0.671eef4a01c1c19925175d16e3a30c4c428181fb8d7ae802a261f283e4166a0ac435e2f505743aa9e45d893f9a3df017b501
   languageName: node
   linkType: hard

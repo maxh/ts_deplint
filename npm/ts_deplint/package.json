@@ -1,6 +1,6 @@
 {
   "name": "@ts_deplint/cli",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "bin": "dist/index.js",
   "files": [
     "dist/**/*",
@@ -24,10 +24,10 @@
     "typescript": "^5.4.3"
   },
   "optionalDependencies": {
-    "@ts_deplint/cli-darwin-arm64": "0.0.5",
-    "@ts_deplint/cli-darwin-x64": "0.0.5",
-    "@ts_deplint/cli-linux-arm64": "0.0.5",
-    "@ts_deplint/cli-linux-x64": "0.0.5"
+    "@ts_deplint/cli-darwin-arm64": "0.0.6",
+    "@ts_deplint/cli-darwin-x64": "0.0.6",
+    "@ts_deplint/cli-linux-arm64": "0.0.6",
+    "@ts_deplint/cli-linux-x64": "0.0.6"
   },
   "eslintConfig": {
     "extends": [
