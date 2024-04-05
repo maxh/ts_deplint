@@ -9,6 +9,7 @@ on:
     tags-ignore:
       - "ts_deplint-*"
   pull_request:
+  workflow_dispatch:
 
 env:
   CRATE_NAME: ts_deplint
