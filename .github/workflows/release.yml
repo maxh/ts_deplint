@@ -99,7 +99,7 @@ jobs:
             export node_pkg="${scope}/cli-${node_os}-${node_arch}"
           fi
           # set the binary name
-          bin="app"
+          bin="ts_deplint"
           # create the package directory
           mkdir -p "${node_pkg}/bin"
           # generate package.json from the template
