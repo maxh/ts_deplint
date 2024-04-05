@@ -1,6 +1,6 @@
 {
   "name": "@ts_deplint/cli",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "bin": "dist/index.js",
   "files": [
     "dist/**/*",
@@ -10,7 +10,7 @@
     "typecheck": "tsc --noEmit",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "build": "tsc",
+    "build": "tsc && chmod +x build/index.js",
     "dev": "yarn build && node dist/index.js"
   },
   "license": "MIT",
@@ -24,10 +24,10 @@
     "typescript": "^5.4.3"
   },
   "optionalDependencies": {
-    "@ts_deplint/cli-darwin-arm64": "0.0.6",
-    "@ts_deplint/cli-darwin-x64": "0.0.6",
-    "@ts_deplint/cli-linux-arm64": "0.0.6",
-    "@ts_deplint/cli-linux-x64": "0.0.6"
+    "@ts_deplint/cli-darwin-arm64": "0.0.7",
+    "@ts_deplint/cli-darwin-x64": "0.0.7",
+    "@ts_deplint/cli-linux-arm64": "0.0.7",
+    "@ts_deplint/cli-linux-x64": "0.0.7"
   },
   "eslintConfig": {
     "extends": [

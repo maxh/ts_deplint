@@ -22,7 +22,7 @@ function getExePath() {
   try {
     // Since the binary will be located inside `node_modules`, we can simply call `require.resolve`
     return require.resolve(
-      `@ts_deplint/cli-${os}-${arch}/bin/ts_deplint{extension}`,
+      `@ts_deplint/cli-${os}-${arch}/bin/ts_deplint${extension}`,
     );
   } catch (e) {
     throw new Error(
