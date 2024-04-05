@@ -103,7 +103,7 @@ jobs:
           cp "../target/${{ matrix.build.TARGET }}/release/${bin}" "${npm_package_name}/bin"
           # publish the package
           cd "${npm_package_name}"
-          npm publish --access public --dry-run
+          npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
