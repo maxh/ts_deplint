@@ -4,7 +4,7 @@ import { spawnSync } from "child_process";
 
 /**
  * Returns the executable path which is located inside `node_modules`
- * The naming convention is @ts_deplint/cli-${os}-${arch}
+ * The naming convention is @ts_deplint/ts_deplint-${os}-${arch}
  * If the platform is `win32` or `cygwin`, executable will include a `.exe` extension.
  * @see https://nodejs.org/api/os.html#osarch
  * @see https://nodejs.org/api/os.html#osplatform
@@ -22,7 +22,7 @@ function getExePath() {
   try {
     // Since the binary will be located inside `node_modules`, we can simply call `require.resolve`
     return require.resolve(
-      `@ts_deplint/cli-${os}-${arch}/bin/ts_deplint${extension}`,
+      `@ts_deplint/ts_deplint-${os}-${arch}/bin/ts_deplint${extension}`,
     );
   } catch (e) {
     throw new Error(
