@@ -4,7 +4,7 @@ import { spawnSync } from "child_process";
 
 /**
  * Returns the executable path which is located inside `node_modules`
- * The naming convention is app-${os}-${arch}
+ * The naming convention is @ts_deplint/cli-${os}-${arch}
  * If the platform is `win32` or `cygwin`, executable will include a `.exe` extension.
  * @see https://nodejs.org/api/os.html#osarch
  * @see https://nodejs.org/api/os.html#osplatform
@@ -21,10 +21,10 @@ function getExePath() {
 
   try {
     // Since the binary will be located inside `node_modules`, we can simply call `require.resolve`
-    return require.resolve(`app-${os}-${arch}/bin/app${extension}`);
+    return require.resolve(`@ts_deplint/cli-${os}-${arch}/bin/app${extension}`);
   } catch (e) {
     throw new Error(
-      `Couldn't find application binary inside node_modules for ${os}-${arch}`
+      `Couldn't find ts_deplint binary inside node_modules for ${os}-${arch}`
     );
   }
 }

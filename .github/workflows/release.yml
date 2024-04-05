@@ -81,8 +81,7 @@ jobs:
         shell: bash
         run: |
           cd npm
-          # set the binary name
-          bin="app"
+          scope = "@ts_deplint"
           # derive the OS and architecture from the build matrix name
           # note: when split by a hyphen, first part is the OS and the second is the architecture
           node_os=$(echo "${{ matrix.build.NAME }}" | cut -d '-' -f1)
@@ -94,10 +93,12 @@ jobs:
           # set the package name
           # note: use 'windows' as OS name instead of 'win32'
           if [ "${{ matrix.build.OS }}" = "windows-2022" ]; then
-            export node_pkg="${bin}-windows-${node_arch}"
+            export node_pkg="${scope}/cli-windows-${node_arch}"
           else
-            export node_pkg="${bin}-${node_os}-${node_arch}"
+            export node_pkg="${scope}/cli-${node_os}-${node_arch}"
           fi
+          # set the binary name
+          bin="app"
           # create the package directory
           mkdir -p "${node_pkg}/bin"
           # generate package.json from the template
@@ -132,7 +133,7 @@ jobs:
         continue-on-error: true
         shell: bash
         run: |
-          cd npm/app
+          cd npm/ts_deplint
           yarn install # requires optional dependencies to be present in the registry
           yarn build
           npm publish --access public --dry-run
