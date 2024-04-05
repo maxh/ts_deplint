@@ -1,4 +1,4 @@
-name: Continuous Deployment
+name: Release
 
 on:
   push:
@@ -81,7 +81,7 @@ jobs:
           node_arch=$(echo "${{ matrix.build.NAME }}" | cut -d '-' -f2)
           export node_arch
           # set the version
-          export npm_package_version="${{ env.RELEASE_VERSION }}"
+          export npm_package_version="${{ steps.version.outputs.new-version }}"
           # set the package name
           # note: use 'windows' as OS name instead of 'win32'
           if [ "${{ matrix.build.OS }}" = "windows-2022" ]; then
@@ -95,11 +95,11 @@ jobs:
           mkdir -p "${npm_package_name}/bin"
           # generate package.json from the template
           envsubst < package.json.tmpl > "${npm_package_name}/package.json"
+          echo "npm_package_name"
+          echo "$npm_package_name"
+          echo "npm_package_version"
+          echo "$npm_package_version"
           # copy the binary into the package
-          # note: windows binaries has '.exe' extension
-          if [ "${{ matrix.build.OS }}" = "windows-2022" ]; then
-            bin="${bin}.exe"
-          fi
           cp "../target/${{ matrix.build.TARGET }}/release/${bin}" "${npm_package_name}/bin"
           # publish the package
           cd "${npm_package_name}"
