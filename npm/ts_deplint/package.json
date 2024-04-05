@@ -10,7 +10,7 @@
     "typecheck": "tsc --noEmit",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "build": "tsc && chmod +x build/index.js",
+    "build": "tsc && chmod +x dist/index.js",
     "dev": "yarn build && node dist/index.js"
   },
   "license": "MIT",
