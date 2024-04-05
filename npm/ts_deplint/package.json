@@ -21,9 +21,7 @@
     "@ts_deplint/cli-linux-x64": "0.0.1",
     "@ts_deplint/cli-linux-arm64": "0.0.1",
     "@ts_deplint/cli-darwin-x64": "0.0.1",
-    "@ts_deplint/cli-darwin-arm64": "0.0.1",
-    "@ts_deplint/cli-windows-x64": "0.0.1",
-    "@ts_deplint/cli-windows-arm64": "0.0.1"
+    "@ts_deplint/cli-darwin-arm64": "0.0.1"
   },
   "eslintConfig": {
     "extends": [
