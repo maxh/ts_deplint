@@ -57,7 +57,7 @@ jobs:
       - name: Determine new package version
         id: version
         run: |
-          git checkout HEAD -- package.json
+          git checkout HEAD -- Cargo.toml
           curr="$(grep -oE 'version\s*=\s*"[^"]+"' Cargo.toml | cut -d '"' -f 2 | head -n 1)"
           echo "new-version=$curr" >> "$GITHUB_OUTPUT"
 
