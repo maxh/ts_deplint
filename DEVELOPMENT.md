@@ -8,9 +8,9 @@ cargo run lint ~/loop/backend/src
 cargo test
 
 # Release.
-git tag -d v0.0.6
-git push origin :refs/tags/v0.0.6
+git tag -d v0.0.7
+git push origin :refs/tags/v0.0.7
 
-git tag v0.0.6
+git tag v0.0.7
 git push origin --tags
 ```
