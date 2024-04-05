@@ -9,6 +9,7 @@
     "build": "tsc",
     "dev": "yarn build && node lib/index.js"
   },
+  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/maxh/ts_deplint.git"
