@@ -24,7 +24,7 @@ function getExePath() {
     return require.resolve(`@ts_deplint/cli-${os}-${arch}/bin/app${extension}`);
   } catch (e) {
     throw new Error(
-      `Couldn't find ts_deplint binary inside node_modules for ${os}-${arch}`
+      `Couldn't find ts_deplint binary inside node_modules for ${os}-${arch}`,
     );
   }
 }

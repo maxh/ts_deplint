@@ -16,13 +16,14 @@
   },
   "author": "Max Heinritz",
   "devDependencies": {
-    "@types/node": "^18.11.18"
+    "@types/node": "^18.11.18",
+    "typescript": "^5.4.3"
   },
   "optionalDependencies": {
-    "@ts_deplint/cli-linux-x64": "0.0.5",
-    "@ts_deplint/cli-linux-arm64": "0.0.5",
+    "@ts_deplint/cli-darwin-arm64": "0.0.5",
     "@ts_deplint/cli-darwin-x64": "0.0.5",
-    "@ts_deplint/cli-darwin-arm64": "0.0.5"
+    "@ts_deplint/cli-linux-arm64": "0.0.5",
+    "@ts_deplint/cli-linux-x64": "0.0.5"
   },
   "eslintConfig": {
     "extends": [
