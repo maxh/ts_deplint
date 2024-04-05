@@ -54,9 +54,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Set the release version
-        shell: bash
-        run: echo "RELEASE_VERSION=${GITHUB_REF:11}" >> $GITHUB_ENV
+      - name: Determine new package version
+        id: version
+        run: |
+          git checkout HEAD -- package.json
+          curr="$(grep -oE 'version\s*=\s*"[^"]+"' Cargo.toml | cut -d '"' -f 2 | head -n 1)"
+          echo "new-version=$curr" >> "$GITHUB_OUTPUT"
 
       - name: Install Rust toolchain
         uses: actions-rs/toolchain@v1
@@ -90,28 +93,28 @@ jobs:
           node_arch=$(echo "${{ matrix.build.NAME }}" | cut -d '-' -f2)
           export node_arch
           # set the version
-          export node_version="${{ env.RELEASE_VERSION }}"
+          export npm_package_version="${{ env.RELEASE_VERSION }}"
           # set the package name
           # note: use 'windows' as OS name instead of 'win32'
           if [ "${{ matrix.build.OS }}" = "windows-2022" ]; then
-            export node_pkg="${scope}/cli-windows-${node_arch}"
+            export npm_package_name="${scope}/cli-windows-${node_arch}"
           else
-            export node_pkg="${scope}/cli-${node_os}-${node_arch}"
+            export npm_package_name="${scope}/cli-${node_os}-${node_arch}"
           fi
           # set the binary name
           bin="ts_deplint"
           # create the package directory
-          mkdir -p "${node_pkg}/bin"
+          mkdir -p "${npm_package_name}/bin"
           # generate package.json from the template
-          envsubst < package.json.tmpl > "${node_pkg}/package.json"
+          envsubst < package.json.tmpl > "${npm_package_name}/package.json"
           # copy the binary into the package
           # note: windows binaries has '.exe' extension
           if [ "${{ matrix.build.OS }}" = "windows-2022" ]; then
             bin="${bin}.exe"
           fi
-          cp "../target/${{ matrix.build.TARGET }}/release/${bin}" "${node_pkg}/bin"
+          cp "../target/${{ matrix.build.TARGET }}/release/${bin}" "${npm_package_name}/bin"
           # publish the package
-          cd "${node_pkg}"
+          cd "${npm_package_name}"
           npm publish --access public --dry-run
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
