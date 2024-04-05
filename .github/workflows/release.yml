@@ -85,9 +85,9 @@ jobs:
           # set the package name
           # note: use 'windows' as OS name instead of 'win32'
           if [ "${{ matrix.build.OS }}" = "windows-2022" ]; then
-            export npm_package_name="${scope}/cli-windows-${node_arch}"
+            export npm_package_name="${scope}/ts_deplint-windows-${node_arch}"
           else
-            export npm_package_name="${scope}/cli-${node_os}-${node_arch}"
+            export npm_package_name="${scope}/ts_deplint-${node_os}-${node_arch}"
           fi
           # set the binary name
           bin="ts_deplint"
