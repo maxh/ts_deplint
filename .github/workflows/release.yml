@@ -95,11 +95,15 @@ jobs:
           mkdir -p "${npm_package_name}/bin"
           # generate package.json from the template
           envsubst < package.json.tmpl > "${npm_package_name}/package.json"
+          echo "npm_package_name"
+          echo "$npm_package_name"
+          echo "npm_package_version"
+          echo "$npm_package_version"
           # copy the binary into the package
           cp "../target/${{ matrix.build.TARGET }}/release/${bin}" "${npm_package_name}/bin"
           # publish the package
           cd "${npm_package_name}"
-          npm publish --access public
+          npm publish --access public --dry-run
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
@@ -124,6 +128,6 @@ jobs:
           cd npm/ts_deplint
           yarn install # requires optional dependencies to be present in the registry
           yarn build
-          npm publish --access public
+          npm publish --access public --dry-run
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
