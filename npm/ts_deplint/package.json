@@ -1,0 +1,46 @@
+{
+  "name": "@ts_deplint/ts_deplint",
+  "version": "0.0.7",
+  "bin": "dist/index.js",
+  "files": [
+    "dist/**/*",
+    "!dist/**/*.test.js"
+  ],
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "build": "tsc && chmod +x dist/index.js",
+    "dev": "yarn build && node dist/index.js"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/maxh/ts_deplint.git"
+  },
+  "author": "Max Heinritz",
+  "devDependencies": {
+    "@types/node": "^18.11.18",
+    "typescript": "^5.4.3"
+  },
+  "optionalDependencies": {
+    "@ts_deplint/ts_deplint-darwin-arm64": "0.0.7",
+    "@ts_deplint/ts_deplint-darwin-x64": "0.0.7",
+    "@ts_deplint/ts_deplint-linux-arm64": "0.0.7",
+    "@ts_deplint/ts_deplint-linux-x64": "0.0.7"
+  },
+  "eslintConfig": {
+    "extends": [
+      "eslint:recommended",
+      "plugin:@typescript-eslint/recommended"
+    ],
+    "parser": "@typescript-eslint/parser",
+    "plugins": [
+      "@typescript-eslint"
+    ],
+    "ignorePatterns": [
+      "lib/*"
+    ],
+    "root": true
+  }
+}
