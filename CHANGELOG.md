@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.0.8
+
+- Fix bug with allowed and disallowed siblings that share same prefix.
+
 ## v0.0.5
 
 - Refactor internals, minor bug fixes.
