@@ -11,6 +11,7 @@ impl Hash for Violation {
     fn hash<H: Hasher>(&self, state: &mut H) {
         self.file_path.hash(state);
         self.disallowed_import.hash(state);
+        self.full_disallowed_import.hash(state);
     }
 }
 
@@ -54,7 +55,12 @@ where
                 full_disallowed_imports_by_file_path_plus_disallowed_import
                     .get(&key)
                     .expect("full_disallowed_imports_by_file_path_plus_disallowed_imports");
-            for full_disallowed_import in full_disallowed_imports {
+            let sorted_full_disallowed_imports = {
+                let mut sorted_full_disallowed_imports = full_disallowed_imports.clone();
+                sorted_full_disallowed_imports.sort();
+                sorted_full_disallowed_imports
+            };
+            for full_disallowed_import in sorted_full_disallowed_imports {
                 println!("     {}", full_disallowed_import);
             }
         }
