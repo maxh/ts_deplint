@@ -55,6 +55,7 @@ fn check_files_for_disallowed_imports(
                     let violation = Violation {
                         file_path: relative_path.to_str().expect("").to_string(),
                         disallowed_import: disallowed_import.clone(),
+                        full_disallowed_import: import.clone(),
                     };
                     violations.push(violation);
                     if abort_on_violation {
