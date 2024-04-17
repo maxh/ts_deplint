@@ -33,6 +33,7 @@ pub fn fix_violation(root: &Path, violation: &Violation) -> Result<(), Box<dyn s
     let disallowed_imports = allow
         .entry(dir_after_common_prefix)
         .or_insert_with(Vec::new);
+    disallowed_imports.retain(|i| i != "-");
     disallowed_imports.push(disallowed_after_common_prefix);
     disallowed_imports.sort();
     disallowed_imports.dedup();
