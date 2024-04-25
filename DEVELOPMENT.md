@@ -8,7 +8,7 @@ cargo run lint ~/loop/backend/src
 cargo test
 
 # Bump version.
-fastmod 0\.0\.7 0.0.8 
+fastmod 0\.0\.7 0.0.9 
 
 # Release by running the "Release" action through the GitHub UI.
 ```
