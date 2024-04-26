@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.0.9
+
+- Show more detail about which imported paths cause violations.
+
 ## v0.0.8
 
 - Fix bug with allowed and disallowed siblings that share same prefix.
