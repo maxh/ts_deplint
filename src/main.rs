@@ -38,6 +38,9 @@ struct LintCommand {
 struct DiagramCommand {
     /// Paths can be either directories or files.
     paths: Vec<String>,
+
+    #[arg(short, long, default_value_t = false)]
+    show_circular_dependencies: bool,
 }
 
 #[derive(Parser)]
@@ -96,9 +99,9 @@ fn run_diagram_command(command: DiagramCommand) -> Result<(), Box<dyn Error>> {
         let target = Path::new(path);
         if target.ends_with(RULES_FILE_NAME) {
             let readme_path = target.parent().unwrap().join("README.md");
-            update_readme_with_diagram(target, &readme_path)?;
+            update_readme_with_diagram(target, &readme_path, command.show_circular_dependencies)?;
         } else if target.is_dir() {
-            update_diagrams_recursively(&target)?;
+            update_diagrams_recursively(&target, command.show_circular_dependencies)?;
         } else {
             return Err(format!("Target path '{}' is not a rules file or directory.", path).into());
         }
