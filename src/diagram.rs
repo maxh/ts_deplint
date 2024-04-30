@@ -36,8 +36,8 @@ fn get_allows(yaml_path: &Path) -> Result<BTreeMap<String, BTreeSet<String>>, Bo
     let yaml_rules = read_rules_file(yaml_path)?;
     let converted_rules = yaml_rules
         .allow
-        .iter()
-        .map(|(source, targets)| (source.clone(), BTreeSet::from_iter(targets.iter().cloned())))
+        .into_iter()
+        .map(|(source, targets)| (source, BTreeSet::from_iter(targets.into_iter())))
         .collect::<BTreeMap<String, BTreeSet<String>>>();
     Ok(converted_rules)
 }
