@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.0.10
+
+- Add option to highlight cycles between two nodes with a red edge.
+
 ## v0.0.9
 
 - Show more detail about which imported paths cause violations.
