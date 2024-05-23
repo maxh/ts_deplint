@@ -86,8 +86,8 @@ fn lint_rules_file(
                 directory_name: source.to_string(),
                 rules_file_path: rules_path.to_str().unwrap().to_string(),
                 user_message: format!(
-                    "\"{}\" in allow section of {} doesn't exist",
-                    source_path.display(),
+                    "\'{}\' in allows of {} doesn't exist",
+                    source,
                     rules_path.display(),
                 ),
             })
@@ -102,10 +102,10 @@ fn lint_rules_file(
                     directory_name: target.to_string(),
                     rules_file_path: rules_path.to_str().unwrap().to_string(),
                     user_message: format!(
-                        // TODO: reword user message
-                        "ts_deplint rules in {} reference non-existent directory: {}",
+                        "'{}' in allows of {} in {} doesn't exist",
+                        target,
+                        source,
                         rules_path.display(),
-                        target_path.display()
                     ),
                 });
             }
