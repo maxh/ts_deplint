@@ -125,7 +125,14 @@ fn run_fix_command(command: FixCommand) -> Result<(), Box<dyn Error>> {
                 break;
             }
             for violation in violations {
-                ts_deplint::fix_violation(&root, &violation)?;
+                match violation {
+                    Violation::DisallowedImportViolation(violation) => {
+                        ts_deplint::fix_violation(&root, &violation)?;
+                    }
+                    Violation::ReferenceToNonexistentDirectory(issue) => {
+                        ts_deplint::remove_reference_to_nonexistent_directory(&root, &issue)?;
+                    }
+                }
             }
             i += 1;
             if i > 500 {

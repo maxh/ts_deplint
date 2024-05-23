@@ -13,13 +13,12 @@ mod visit;
 
 pub use diagram::update_diagrams_recursively;
 pub use diagram::update_readme_with_diagram;
-pub use fix::fix_violation;
+pub use fix::{fix_violation, remove_reference_to_nonexistent_directory};
 pub use format::format_rules_file;
 pub use format::format_rules_files_recursively;
 pub use root::find_package_json_directory;
 pub use rules::RULES_FILE_NAME;
-pub use violations::pretty_print_violations;
-pub use violations::Violation;
+pub use violations::{pretty_print_violations, DisallowedImportViolation, Violation};
 
 pub fn list_violations(
     root: &Path,

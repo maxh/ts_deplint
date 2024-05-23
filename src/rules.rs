@@ -6,6 +6,8 @@ use std::collections::BTreeMap;
 use std::error::Error;
 use std::io::Write;
 
+use crate::violations::ReferenceToNonexistentDirectory;
+
 pub const RULES_FILE_NAME: &str = ".deplint.rules.yml";
 
 #[derive(Serialize, Deserialize)]
@@ -58,10 +60,58 @@ fn find_difference<'a>(a: &[&'a str], b: &[&'a str]) -> Vec<&'a str> {
         .collect::<Vec<&str>>()
 }
 
-pub fn get_dir_rules(dir_path: &Path) -> Option<Rules> {
+pub fn get_dir_rules_if_exists(
+    dir_path: &Path,
+) -> (Option<Rules>, Vec<ReferenceToNonexistentDirectory>) {
     let rules_path = dir_path.join(RULES_FILE_NAME);
-    let rules_result = read_rules_file(&rules_path);
-    return rules_result.ok();
+    match read_rules_file(&rules_path) {
+        Ok(rules) => {
+            let issues = lint_rules_file(dir_path, &rules_path, &rules);
+            (Some(rules), issues)
+        }
+        Err(e) => (None, vec![]),
+    }
+}
+
+fn lint_rules_file(
+    dir_path: &Path,
+    rules_path: &Path,
+    rules: &Rules,
+) -> Vec<ReferenceToNonexistentDirectory> {
+    let mut issues = vec![];
+    for (source, targets) in &rules.allow {
+        let source_path = Path::new(dir_path).join(source);
+        if !source_path.is_dir() {
+            issues.push(ReferenceToNonexistentDirectory {
+                directory_name: source.to_string(),
+                rules_file_path: rules_path.to_str().unwrap().to_string(),
+                user_message: format!(
+                    "\"{}\" in allow section of {} doesn't exist",
+                    source_path.display(),
+                    rules_path.display(),
+                ),
+            })
+        }
+        for target in targets {
+            if target == "-" {
+                continue;
+            }
+            let target_path = Path::new(dir_path).join(target);
+            if !target_path.is_dir() {
+                issues.push(ReferenceToNonexistentDirectory {
+                    directory_name: target.to_string(),
+                    rules_file_path: rules_path.to_str().unwrap().to_string(),
+                    user_message: format!(
+                        // TODO: reword user message
+                        "ts_deplint rules in {} reference non-existent directory: {}",
+                        rules_path.display(),
+                        target_path.display()
+                    ),
+                });
+            }
+        }
+    }
+    issues
 }
 
 pub fn read_rules_file(path: &Path) -> Result<Rules, Box<dyn Error>> {

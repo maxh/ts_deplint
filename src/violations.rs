@@ -3,14 +3,20 @@ use std::{
     hash::{Hash, Hasher},
 };
 
+#[derive(Debug, Eq, Hash, PartialEq)]
+pub enum Violation {
+    DisallowedImportViolation(DisallowedImportViolation),
+    ReferenceToNonexistentDirectory(ReferenceToNonexistentDirectory),
+}
+
 #[derive(Debug)]
-pub struct Violation {
+pub struct DisallowedImportViolation {
     pub file_path: String,
     pub disallowed_import: String,
     pub full_disallowed_import: String,
 }
 
-impl Hash for Violation {
+impl Hash for DisallowedImportViolation {
     fn hash<H: Hasher>(&self, state: &mut H) {
         self.file_path.hash(state);
         self.disallowed_import.hash(state);
@@ -18,7 +24,7 @@ impl Hash for Violation {
     }
 }
 
-impl PartialEq for Violation {
+impl PartialEq for DisallowedImportViolation {
     fn eq(&self, other: &Self) -> bool {
         self.file_path == other.file_path
             && self.disallowed_import == other.disallowed_import
@@ -26,13 +32,20 @@ impl PartialEq for Violation {
     }
 }
 
-impl Eq for Violation {}
+impl Eq for DisallowedImportViolation {}
+
+#[derive(Debug, Eq, Hash, PartialEq)]
+pub struct ReferenceToNonexistentDirectory {
+    pub rules_file_path: String,
+    pub directory_name: String,
+    pub user_message: String,
+}
 
 pub fn pretty_print_violations<I>(violations: I)
 where
     I: IntoIterator<Item = Violation>,
 {
-    // Cluster violations by file path
+    // Cluster disallowed import violations by file path
     let mut disallowed_imports_by_file_path: HashMap<String, HashSet<String>> = HashMap::new();
     let mut full_disallowed_imports_by_file_path_plus_disallowed_import: HashMap<
         String,
@@ -40,15 +53,22 @@ where
     > = HashMap::new();
 
     for violation in violations {
-        let key = format!("{}:{}", violation.file_path, violation.disallowed_import);
-        disallowed_imports_by_file_path
-            .entry(violation.file_path)
-            .or_default()
-            .insert(violation.disallowed_import);
-        full_disallowed_imports_by_file_path_plus_disallowed_import
-            .entry(key)
-            .or_default()
-            .insert(violation.full_disallowed_import);
+        match violation {
+            Violation::DisallowedImportViolation(violation) => {
+                let key = format!("{}:{}", violation.file_path, violation.disallowed_import);
+                disallowed_imports_by_file_path
+                    .entry(violation.file_path)
+                    .or_default()
+                    .insert(violation.disallowed_import);
+                full_disallowed_imports_by_file_path_plus_disallowed_import
+                    .entry(key)
+                    .or_default()
+                    .insert(violation.full_disallowed_import);
+            }
+            Violation::ReferenceToNonexistentDirectory(issue) => {
+                println!("    {}", issue.user_message);
+            }
+        }
     }
 
     for (file_path, disallowed_imports) in disallowed_imports_by_file_path {
