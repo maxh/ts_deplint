@@ -61,12 +61,13 @@ fn find_difference<'a>(a: &[&'a str], b: &[&'a str]) -> Vec<&'a str> {
 }
 
 pub fn get_dir_rules_if_exists(
+    root: &Path,
     dir_path: &Path,
 ) -> (Option<Rules>, Vec<ReferenceToNonexistentDirectory>) {
     let rules_path = dir_path.join(RULES_FILE_NAME);
     match read_rules_file(&rules_path) {
         Ok(rules) => {
-            let issues = lint_rules_file(dir_path, &rules_path, &rules);
+            let issues = lint_rules_file(root, dir_path, &rules_path, &rules);
             (Some(rules), issues)
         }
         Err(_e) => (None, vec![]),
@@ -74,11 +75,13 @@ pub fn get_dir_rules_if_exists(
 }
 
 fn lint_rules_file(
+    root: &Path,
     dir_path: &Path,
     rules_path: &Path,
     rules: &Rules,
 ) -> Vec<ReferenceToNonexistentDirectory> {
     let mut issues = vec![];
+    let relative_rules_path = rules_path.strip_prefix(root).unwrap_or(rules_path);
     for (source, targets) in &rules.allow {
         let source_path = Path::new(dir_path).join(source);
         if !source_path.is_dir() {
@@ -86,9 +89,9 @@ fn lint_rules_file(
                 directory_name: source.to_string(),
                 rules_file_path: rules_path.to_str().unwrap().to_string(),
                 user_message: format!(
-                    "\'{}\' in allows of {} doesn't exist",
+                    "\'{}\' in allows section of {} doesn't exist",
                     source,
-                    rules_path.display(),
+                    relative_rules_path.display(),
                 ),
             })
         }
@@ -102,10 +105,10 @@ fn lint_rules_file(
                     directory_name: target.to_string(),
                     rules_file_path: rules_path.to_str().unwrap().to_string(),
                     user_message: format!(
-                        "'{}' in allows of {} in {} doesn't exist",
+                        "'{}' in allows section of {} in {} doesn't exist",
                         target,
                         source,
-                        rules_path.display(),
+                        relative_rules_path.display(),
                     ),
                 });
             }

@@ -80,7 +80,7 @@ fn visit_directories(
     directories: &Vec<String>,
     abort_on_violation: bool,
 ) -> Result<(), Box<dyn Error>> {
-    let (current_rules, rules_file_violations) = rules::get_dir_rules_if_exists(current);
+    let (current_rules, rules_file_violations) = rules::get_dir_rules_if_exists(root, current);
     violations.extend(
         rules_file_violations
             .into_iter()
