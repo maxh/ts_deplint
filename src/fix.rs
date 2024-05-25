@@ -47,7 +47,6 @@ pub fn fix_violation(
 }
 
 pub fn remove_reference_to_nonexistent_directory(
-    root: &Path,
     issue: &ReferenceToNonexistentDirectory,
 ) -> Result<(), Box<dyn std::error::Error>> {
     let rules_file_path = Path::new(&issue.rules_file_path);

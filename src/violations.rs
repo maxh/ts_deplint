@@ -66,7 +66,7 @@ where
                     .insert(violation.full_disallowed_import);
             }
             Violation::ReferenceToNonexistentDirectory(issue) => {
-                println!("    {}", issue.user_message);
+                println!("{}", issue.user_message);
             }
         }
     }

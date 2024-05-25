@@ -130,7 +130,7 @@ fn run_fix_command(command: FixCommand) -> Result<(), Box<dyn Error>> {
                         ts_deplint::fix_violation(&root, &violation)?;
                     }
                     Violation::ReferenceToNonexistentDirectory(issue) => {
-                        ts_deplint::remove_reference_to_nonexistent_directory(&root, &issue)?;
+                        ts_deplint::remove_reference_to_nonexistent_directory(&issue)?;
                     }
                 }
             }

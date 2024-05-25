@@ -69,7 +69,7 @@ pub fn get_dir_rules_if_exists(
             let issues = lint_rules_file(dir_path, &rules_path, &rules);
             (Some(rules), issues)
         }
-        Err(e) => (None, vec![]),
+        Err(_e) => (None, vec![]),
     }
 }
 
