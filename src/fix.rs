@@ -47,10 +47,11 @@ pub fn fix_violation(
 }
 
 pub fn remove_reference_to_nonexistent_directory(
+    root: &Path,
     issue: &ReferenceToNonexistentDirectory,
 ) -> Result<(), Box<dyn std::error::Error>> {
-    let rules_file_path = Path::new(&issue.rules_file_path);
-    let mut rules = read_rules_file(rules_file_path)?;
+    let rules_file_path = root.join(&issue.file_path);
+    let mut rules = read_rules_file(&rules_file_path)?;
     rules.allow = rules
         .allow
         .into_iter()
@@ -68,5 +69,5 @@ pub fn remove_reference_to_nonexistent_directory(
             }
         })
         .collect();
-    write_formatted_rules_file(rules_file_path, rules)
+    write_formatted_rules_file(&rules_file_path, rules)
 }

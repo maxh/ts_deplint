@@ -87,12 +87,7 @@ fn lint_rules_file(
         if !source_path.is_dir() {
             issues.push(ReferenceToNonexistentDirectory {
                 directory_name: source.to_string(),
-                rules_file_path: rules_path.to_str().unwrap().to_string(),
-                user_message: format!(
-                    "\'{}\' in allows section of {} doesn't exist",
-                    source,
-                    relative_rules_path.display(),
-                ),
+                file_path: relative_rules_path.to_str().unwrap().to_string(),
             })
         }
         for target in targets {
@@ -103,13 +98,7 @@ fn lint_rules_file(
             if !target_path.is_dir() {
                 issues.push(ReferenceToNonexistentDirectory {
                     directory_name: target.to_string(),
-                    rules_file_path: rules_path.to_str().unwrap().to_string(),
-                    user_message: format!(
-                        "'{}' in allows section of {} in {} doesn't exist",
-                        target,
-                        source,
-                        relative_rules_path.display(),
-                    ),
+                    file_path: relative_rules_path.to_str().unwrap().to_string(),
                 });
             }
         }
