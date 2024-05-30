@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.0.11
+
+- Lint and fix references to nonexistent directories.
+
 ## v0.0.10
 
 - Add option to highlight cycles between two nodes with a red edge.
