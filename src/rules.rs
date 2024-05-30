@@ -6,6 +6,8 @@ use std::collections::BTreeMap;
 use std::error::Error;
 use std::io::Write;
 
+use crate::violations::ReferenceToNonexistentDirectory;
+
 pub const RULES_FILE_NAME: &str = ".deplint.rules.yml";
 
 #[derive(Serialize, Deserialize)]
@@ -58,10 +60,50 @@ fn find_difference<'a>(a: &[&'a str], b: &[&'a str]) -> Vec<&'a str> {
         .collect::<Vec<&str>>()
 }
 
-pub fn get_dir_rules(dir_path: &Path) -> Option<Rules> {
+pub fn get_dir_rules_if_exists(
+    root: &Path,
+    dir_path: &Path,
+) -> (Option<Rules>, Vec<ReferenceToNonexistentDirectory>) {
     let rules_path = dir_path.join(RULES_FILE_NAME);
-    let rules_result = read_rules_file(&rules_path);
-    return rules_result.ok();
+    match read_rules_file(&rules_path) {
+        Ok(rules) => {
+            let issues = lint_rules_file(root, dir_path, &rules_path, &rules);
+            (Some(rules), issues)
+        }
+        Err(_e) => (None, vec![]),
+    }
+}
+
+fn lint_rules_file(
+    root: &Path,
+    dir_path: &Path,
+    rules_path: &Path,
+    rules: &Rules,
+) -> Vec<ReferenceToNonexistentDirectory> {
+    let mut issues = vec![];
+    let relative_rules_path = rules_path.strip_prefix(root).unwrap_or(rules_path);
+    for (source, targets) in &rules.allow {
+        let source_path = Path::new(dir_path).join(source);
+        if !source_path.is_dir() {
+            issues.push(ReferenceToNonexistentDirectory {
+                directory_name: source.to_string(),
+                file_path: relative_rules_path.to_str().unwrap().to_string(),
+            })
+        }
+        for target in targets {
+            if target == "-" {
+                continue;
+            }
+            let target_path = Path::new(dir_path).join(target);
+            if !target_path.is_dir() {
+                issues.push(ReferenceToNonexistentDirectory {
+                    directory_name: target.to_string(),
+                    file_path: relative_rules_path.to_str().unwrap().to_string(),
+                });
+            }
+        }
+    }
+    issues
 }
 
 pub fn read_rules_file(path: &Path) -> Result<Rules, Box<dyn Error>> {

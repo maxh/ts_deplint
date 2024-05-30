@@ -1,4 +1,7 @@
-use crate::{disallowed, files, rules, ts_reader, violations::Violation};
+use crate::{
+    disallowed, files, rules, ts_reader,
+    violations::{DisallowedImportViolation, Violation},
+};
 use std::{error::Error, path::Path};
 
 pub fn visit_path(
@@ -52,12 +55,12 @@ fn check_files_for_disallowed_imports(
         for import in imports {
             for disallowed_import in disallowed_imports {
                 if import.starts_with(disallowed_import) {
-                    let violation = Violation {
+                    let violation = DisallowedImportViolation {
                         file_path: relative_path.to_str().expect("").to_string(),
                         disallowed_import: disallowed_import.clone(),
                         full_disallowed_import: import.clone(),
                     };
-                    violations.push(violation);
+                    violations.push(Violation::DisallowedImportViolation(violation));
                     if abort_on_violation {
                         return Ok(());
                     }
@@ -77,7 +80,12 @@ fn visit_directories(
     directories: &Vec<String>,
     abort_on_violation: bool,
 ) -> Result<(), Box<dyn Error>> {
-    let current_rules = rules::get_dir_rules(current);
+    let (current_rules, rules_file_violations) = rules::get_dir_rules_if_exists(root, current);
+    violations.extend(
+        rules_file_violations
+            .into_iter()
+            .map(|issue| Violation::ReferenceToNonexistentDirectory(issue)),
+    );
     for child in directories {
         let dir_disallowed_imports = disallowed::get_child_disallowed_imports(
             root,
